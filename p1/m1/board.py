@@ -8,8 +8,6 @@ class Board():
         self.read_file(filename)
         self.create_board_matrix()
 
-
-
     def read_file(self, filename):
         with open(filename, 'r') as file:
             content = file.read().split()
