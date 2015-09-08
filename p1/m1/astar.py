@@ -6,6 +6,11 @@ class NotImplemented(Exception):
 
 
 class Astar:
+
+    def __init__(self, mode):
+        self.mode = mode
+        self.open = []
+
     def generate_path(self, node):
         path = [node]
 
@@ -32,16 +37,16 @@ class Astar:
 
     def astar(self, start, end):
 
-        open_list = []
+        self.open = []
         close_list = set()
 
         start.calculate_heuristic(end)
         start.calculate_f()
-        open_list.append(start)
+        self.append_node(start)
 
-        while open_list:
-            print(open_list)
-            current_node = open_list.pop(0)
+        while self.open:
+            print(self.open)
+            current_node = self.next_node()
             close_list.add(current_node)
 
             current_path = self.generate_path(current_node)
@@ -53,10 +58,9 @@ class Astar:
                 if kid in close_list:
                     continue
 
-                if kid not in open_list:
+                if kid not in self.open:
                     self.attach_and_evaluate(kid, current_node, end)
-                    open_list.append(kid)
-                    open_list.sort()
+                    self.append_node(kid)
 
                 elif current_node.g + kid.weight < kid.g:
                     self.attach_and_evaluate(kid, current_node, end)
@@ -66,7 +70,20 @@ class Astar:
                         propagate_path_improvements(kid)
 
 
-        print("Open: {}".format(open_list))
+        print("Open: {}".format(self.open))
         print("Closed: {}".format(close_list))
 
         return generate_path(current_node)
+
+    def next_node(self):
+        if self.mode == "dfs":
+            return self.open.pop()
+        else:
+            return self.open.pop(0)
+
+    def append_node(self, node):
+        if self.mode == "astar":
+            self.open.append(node)
+            self.open.sort()
+        else:
+            self.open.append(node)
