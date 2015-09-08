@@ -60,16 +60,15 @@ class Main(Frame):
 
         self.canvas.delete('all')
 
-        for y in range(len(self.board.matrix)):
+        for y in range(len(self.board.matrix) - 1, -1, -1):
             print(y)
             for x in range(len(self.board.matrix[y])):
                 coords = (
-                    y * 30 + 2,
-                    x * 30 + 2,
-                    y * 30 + 32,
+                    x * 30 + 3,
+                    (len(self.board.matrix[y]) - y) * 30 + 3,
                     x * 30 + 32,
+                    (len(self.board.matrix[y]) - y) * 30 + 32,
                 )
-
                 self.canvas.create_rectangle(*coords,
                                              fill=self.color_creator(self.board.matrix[y][x]))
 

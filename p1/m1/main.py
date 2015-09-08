@@ -9,8 +9,8 @@ from view import Main
 
 def center_window(r):
 
-    width = 1280
-    height = 600
+    width = 1000
+    height = 800
 
     screen_width = r.winfo_screenwidth()
     screen_height = r.winfo_screenheight()
