@@ -88,6 +88,6 @@ if __name__ == '__main__':
     s, e = b.create_graph()
     print(s.start, s.end)
 
-    a = Astar()
+    a = Astar('bfs')
     print(a.astar(s, e))
 
