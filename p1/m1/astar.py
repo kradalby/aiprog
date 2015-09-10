@@ -9,7 +9,6 @@ class Astar:
 
     def __init__(self, mode, astar_event_handler):
         self.mode = mode
-        print(self.mode)
         self.astar_event_handler = astar_event_handler
         self.open = []
 
@@ -23,25 +22,27 @@ class Astar:
         return path
 
     def attach_and_evaluate(self, kid, parent, end):
+        kid.parent = parent
         kid.g = parent.g + kid.weight
         kid.calculate_heuristic(end)
         kid.calculate_f()
-        kid.parent = parent
+        print(kid)
 
     def propagate_path_improvements(self, node):
         for kid in node.kids:
             if node.g + kid.weight < kid.g:
                 kid.parent = node
                 kid.g = node.g + kid.weight
+                print(kid.g)
                 kid.calculate_f()
                 self.propagate_path_improvements(kid)
 
 
     def astar(self, start, end):
-
         self.open = []
         close_list = set()
 
+        start.g = 0
         start.calculate_heuristic(end)
         start.calculate_f()
         self.append_node(start)
@@ -49,31 +50,38 @@ class Astar:
         while self.open:
             current_node = self.next_node()
             current_path = self.generate_path(current_node)
-            self.astar_event_handler(current_path)
+            self.astar_event_handler(current_path, self.open, close_list)
             close_list.add(current_node)
 
             if current_node is end:
+                print("OPEN:")
+                print(self.open)
+                print("CLOSED:")
+                print(close_list)
                 return current_path
 
             for kid in current_node.kids:
 
-                if kid in close_list:
-                    continue
+                #if kid in close_list:
+                #    continue
 
-                if kid not in self.open:
+                if kid not in self.open and kid not in close_list:
                     self.attach_and_evaluate(kid, current_node, end)
                     self.append_node(kid)
 
                 elif current_node.g + kid.weight < kid.g:
                     self.attach_and_evaluate(kid, current_node, end)
-                    #open_list.add(kid)
 
                     if kid in close_list:
-                        propagate_path_improvements(kid)
+                        print('prop')
+                        self.propagate_path_improvements(kid)
 
-            time.sleep(0.1)
-
-        return generate_path(current_node)
+            time.sleep(0.2)
+        print("OPEN:")
+        print(self.open)
+        print("CLOSED:")
+        print(close_list)
+        return self.generate_path(current_node)
 
     def next_node(self):
         if self.mode == "dfs":

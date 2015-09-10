@@ -58,16 +58,20 @@ class Main(Frame):
         self.current_file = f
 
         self.board = Board(f)
+        self.draw_map()
 
+    def draw_map(self):
         self.canvas.delete('all')
 
         for y in range(len(self.board.matrix) - 1, -1, -1):
             for x in range(len(self.board.matrix[y])):
                 coords = (
                     x * 30 + 3,
-                    (len(self.board.matrix[y]) - y) * 30 + 3,
+                    #(len(self.board.matrix[y]) - y) * 30 + 3,
+                    y * 30 + 3,
                     x * 30 + 32,
-                    (len(self.board.matrix[y]) - y) * 30 + 32,
+                    #(len(self.board.matrix[y]) - y) * 30 + 32,
+                    y * 30 + 32,
                 )
                 self.canvas.create_rectangle(*coords,
                                              fill=self.color_creator(self.board.matrix[y][x]))
@@ -97,9 +101,11 @@ class Main(Frame):
         for node in nodes:
             coords = (
                 node.x * 30 + 2 + 10,
-                (len(self.board.matrix[node.y]) - node.y) * 30 + 2 + 10,
+                #(len(self.board.matrix[node.y]) - node.y) * 30 + 2 + 10,
+                node.y * 30 + 2 + 10,
                 node.x * 30 + 32 - 10,
-                (len(self.board.matrix[node.y]) - node.y) * 30 + 32 - 10,
+                #(len(self.board.matrix[node.y]) - node.y) * 30 + 32 - 10,
+                node.y * 30 + 32 - 10,
             )
             if icon == 'path':
                 self.canvas.create_oval(*coords, fill='cyan', width=0)
@@ -121,7 +127,7 @@ class Main(Frame):
         astar = Astar(mode, self.astar_event_handler)
         start, end = self.board.create_graph()
 
-        trail = astar.astar(start, end)
+        path = astar.astar(start, end)
 
         #if self.view_level > 0:
         #    self.draw_markers(openlist, 'open')
@@ -130,11 +136,17 @@ class Main(Frame):
         #            closedlist.remove(node)
         #    self.draw_markers(closedlist, 'closed')
 
-        self.draw_markers(trail, 'path')
+        self.draw_markers(path, 'path')
 
 
-    def astar_event_handler(self, path):
-        self.draw_markers(path, 'open')
+    def astar_event_handler(self, path, open, closed):
+
+
+        self.canvas.delete('all')
+        self.draw_map()
+        self.draw_markers(path, 'path')
+        self.draw_markers(open, 'open')
+        #self.draw_markers(closed, 'closed')
         self.canvas.update()
 
 

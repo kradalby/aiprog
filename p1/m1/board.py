@@ -77,6 +77,7 @@ class Board():
 
                     node.kids.append(self.matrix[y+j][x+i])
 
+
         start = self.matrix[self.start[1]][self.start[0]]
         end = self.matrix[self.goal[1]][self.goal[0]]
 
