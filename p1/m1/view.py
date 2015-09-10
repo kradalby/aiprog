@@ -25,21 +25,22 @@ class Main(Frame):
         menubar = Menu(self.parent)
 
         self.parent.config(menu=menubar)
-        self.parent.title(u'A-Star')
+        self.parent.title('A-Star')
 
         boardsmenu = Menu(menubar, tearoff=0)
         algorithmmenu = Menu(menubar, tearoff=0)
         optionsmenu = Menu(menubar, tearoff=0)
 
-        menubar.add_cascade(label=u'Boards', menu=boardsmenu)
-        menubar.add_cascade(label=u'Algorithms', menu=algorithmmenu)
-        menubar.add_cascade(label=u'Options', menu=optionsmenu)
+        menubar.add_cascade(label='Boards', menu=boardsmenu)
+        menubar.add_cascade(label='Algorithms', menu=algorithmmenu)
+        menubar.add_cascade(label='Options', menu=optionsmenu)
 
-        algorithmmenu.add_command(label=u'Astar', command=self.perform_astar)
-        #algorithmmenu.add_command(label=u'BFS', command=self.perform_bfs)
+        algorithmmenu.add_command(label='Astar', command=lambda mode="astar": self.perform_astar(mode))
+        algorithmmenu.add_command(label='BFS', command=lambda mode="bfs": self.perform_astar(mode))
+        algorithmmenu.add_command(label='DFS', command=lambda mode="dfs": self.perform_astar(mode))
 
-        optionsmenu.add_command(label=u'Show trail only', state=DISABLED, command=self.only_show_trail)
-        optionsmenu.add_command(label=u'Show all states', command=self.show_all_states)
+        optionsmenu.add_command(label='Show trail only', state=DISABLED, command=self.only_show_trail)
+        optionsmenu.add_command(label='Show all states', command=self.show_all_states)
 
         self.add_boards_to_menu(boardsmenu)
 
@@ -61,7 +62,6 @@ class Main(Frame):
         self.canvas.delete('all')
 
         for y in range(len(self.board.matrix) - 1, -1, -1):
-            print(y)
             for x in range(len(self.board.matrix[y])):
                 coords = (
                     x * 30 + 3,
@@ -97,9 +97,9 @@ class Main(Frame):
         for node in nodes:
             coords = (
                 node.x * 30 + 2 + 10,
-                node.y * 30 + 2 + 10,
+                (len(self.board.matrix[node.y]) - node.y) * 30 + 2 + 10,
                 node.x * 30 + 32 - 10,
-                node.y * 30 + 32 - 10,
+                (len(self.board.matrix[node.y]) - node.y) * 30 + 32 - 10,
             )
             if icon == 'path':
                 self.canvas.create_oval(*coords, fill='cyan', width=0)
@@ -109,28 +109,34 @@ class Main(Frame):
                 self.canvas.create_line(*coords)
                 self.canvas.create_line(coords[2], coords[1], coords[0], coords[3])
 
-    def perform_astar(self):
+    def perform_astar(self, mode):
 
         # Do nothing if no board is loaded
         if self.board is None:
             return
 
-        logging.debug('Start %s' % self.board.get_start())
-        logging.debug('Dest %s' % self.board.get_goal())
-
         # Clear the canvas and redraw the map
         self.createmap(self.current_file)
 
-        trail, openlist, closedlist = a_star(self.board.graph, self.board.get_start(), self.board.get_goal())
+        astar = Astar(mode, self.astar_event_handler)
+        start, end = self.board.create_graph()
 
-        if self.view_level > 0:
-            self.draw_markers(openlist, 'open')
-            for node in trail:
-                if node in closedlist:
-                    closedlist.remove(node)
-            self.draw_markers(closedlist, 'closed')
+        trail = astar.astar(start, end)
+
+        #if self.view_level > 0:
+        #    self.draw_markers(openlist, 'open')
+        #    for node in trail:
+        #        if node in closedlist:
+        #            closedlist.remove(node)
+        #    self.draw_markers(closedlist, 'closed')
 
         self.draw_markers(trail, 'path')
+
+
+    def astar_event_handler(self, path):
+        self.draw_markers(path, 'open')
+        self.canvas.update()
+
 
     def only_show_trail(self):
 

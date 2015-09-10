@@ -1,4 +1,4 @@
-__author__ = 'Fredrik'
+import time
 
 
 class NotImplemented(Exception):
@@ -7,8 +7,10 @@ class NotImplemented(Exception):
 
 class Astar:
 
-    def __init__(self, mode):
+    def __init__(self, mode, astar_event_handler):
         self.mode = mode
+        print(self.mode)
+        self.astar_event_handler = astar_event_handler
         self.open = []
 
     def generate_path(self, node):
@@ -45,11 +47,11 @@ class Astar:
         self.append_node(start)
 
         while self.open:
-            print(self.open)
             current_node = self.next_node()
+            current_path = self.generate_path(current_node)
+            self.astar_event_handler(current_path)
             close_list.add(current_node)
 
-            current_path = self.generate_path(current_node)
             if current_node is end:
                 return current_path
 
@@ -69,9 +71,7 @@ class Astar:
                     if kid in close_list:
                         propagate_path_improvements(kid)
 
-
-        print("Open: {}".format(self.open))
-        print("Closed: {}".format(close_list))
+            time.sleep(0.1)
 
         return generate_path(current_node)
 
