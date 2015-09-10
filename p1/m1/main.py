@@ -1,7 +1,7 @@
 import datetime
 import logging
 
-from Tkinter import *
+from tkinter import *
 
 from astar import *
 from view import Main

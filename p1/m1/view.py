@@ -3,7 +3,7 @@ import os
 import logging
 import time
 
-from Tkinter import *
+from tkinter import *
 from astar import *
 from node import *
 from board import *
