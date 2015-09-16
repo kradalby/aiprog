@@ -29,22 +29,24 @@ class Main(Frame):
 
         boardsmenu = Menu(menubar, tearoff=0)
         algorithmmenu = Menu(menubar, tearoff=0)
+        speedmenu = Menu(menubar, tearoff=0)
         optionsmenu = Menu(menubar, tearoff=0)
 
         menubar.add_cascade(label='Boards', menu=boardsmenu)
         menubar.add_cascade(label='Algorithms', menu=algorithmmenu)
-        menubar.add_cascade(label='Options', menu=optionsmenu)
+        menubar.add_cascade(label='Speed', menu=speedmenu)
+        # menubar.add_cascade(label='Options', menu=optionsmenu)
 
         algorithmmenu.add_command(label='Astar', command=lambda mode="astar": self.perform_astar(mode))
         algorithmmenu.add_command(label='BFS', command=lambda mode="bfs": self.perform_astar(mode))
         algorithmmenu.add_command(label='DFS', command=lambda mode="dfs": self.perform_astar(mode))
 
-        optionsmenu.add_command(label='Show trail only', state=DISABLED, command=self.only_show_trail)
-        optionsmenu.add_command(label='Show all states', command=self.show_all_states)
+        # optionsmenu.add_command(label='Show trail only', state=DISABLED, command=self.only_show_trail)
+        # optionsmenu.add_command(label='Show all states', command=self.show_all_states)
 
         self.add_boards_to_menu(boardsmenu)
 
-        self.canvas = Canvas(self, width=800, height=580)
+        self.canvas = Canvas(self, width=800, height=600)
         self.canvas.config(bg='white')
         self.canvas.pack(fill=BOTH, expand=1)
 
@@ -124,8 +126,8 @@ class Main(Frame):
         # Clear the canvas and redraw the map
         self.createmap(self.current_file)
 
-        astar = Astar(mode, self.astar_event_handler)
-        start, end = self.board.create_graph()
+        astar = Astar(mode, self.board, self.astar_event_handler)
+        start, end = self.board.start, self.board.end
 
         path = astar.astar(start, end)
 
@@ -140,8 +142,6 @@ class Main(Frame):
 
 
     def astar_event_handler(self, path, open, closed):
-
-
         self.canvas.delete('all')
         self.draw_map()
         self.draw_markers(path, 'path')

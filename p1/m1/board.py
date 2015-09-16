@@ -37,8 +37,12 @@ class Board():
             for x in range(self.dimensions[0]):
                 self.matrix[y].append(Node(x, y))
 
-        self.matrix[self.start[1]][self.start[0]].start = True
-        self.matrix[self.goal[1]][self.goal[0]].end = True
+        self.start = self.matrix[self.start[1]][self.start[0]]
+        self.end = self.matrix[self.goal[1]][self.goal[0]]
+
+        self.start.start = True
+        self.end.end = True
+
 
         for barriers in self.barriers:
             for barrier in self.blocked_cordinates(barriers):
@@ -77,18 +81,32 @@ class Board():
 
                     node.kids.append(self.matrix[y+j][x+i])
 
+        return self.start, self.end
 
-        start = self.matrix[self.start[1]][self.start[0]]
-        end = self.matrix[self.goal[1]][self.goal[0]]
+    def generate_kids(self, node):
+        top = 0
+        left = 0
+        right = len(self.matrix[0]) - 1
+        bottom = len(self.matrix) - 1
 
-        return start, end
+        x = node.x
+        y = node.y
 
+        # Make a cartesian product of adjacent Nodes.
+        # Ignores self, out of bounds, diagonals and non-walkables
+        for i, j in product([-1, 0, 1], [-1, 0, 1]):
+            if i == 0 and j == 0:
+                continue
+            if not (left <= (x + i) <= right):
+                continue
+            if not (top <= (y + j) <= bottom):
+                continue
+            if abs(i) + abs(j) > 1:
+                continue
+            try:
+                if not self.matrix[y+j][x+i].walkable:
+                    continue
+            except IndexError:
+                continue
 
-if __name__ == '__main__':
-    b = Board('testmap1.txt')
-    s, e = b.create_graph()
-    print(s.start, s.end)
-
-    a = Astar('bfs')
-    print(a.astar(s, e))
-
+            node.kids.append(self.matrix[y+j][x+i])
