@@ -8,6 +8,7 @@ from astar import *
 from node import *
 from board import *
 
+SIZE = 10
 
 class Main(Frame):
     def __init__(self, parent):
@@ -68,12 +69,12 @@ class Main(Frame):
         for y in range(len(self.board.matrix) - 1, -1, -1):
             for x in range(len(self.board.matrix[y])):
                 coords = (
-                    x * 30 + 3,
-                    #(len(self.board.matrix[y]) - y) * 30 + 3,
-                    y * 30 + 3,
-                    x * 30 + 32,
+                    x * SIZE + 3,
+                    #(len(self.board.matrix[y]) - y) * SIZE + 3,
+                    y * SIZE + 3,
+                    x * SIZE + (SIZE + 2),
                     #(len(self.board.matrix[y]) - y) * 30 + 32,
-                    y * 30 + 32,
+                    y * SIZE + (SIZE + 2),
                 )
                 self.canvas.create_rectangle(*coords,
                                              fill=self.color_creator(self.board.matrix[y][x]))
@@ -102,12 +103,12 @@ class Main(Frame):
 
         for node in nodes:
             coords = (
-                node.x * 30 + 2 + 10,
+                node.x * SIZE + 2 + int((SIZE/4)),
                 #(len(self.board.matrix[node.y]) - node.y) * 30 + 2 + 10,
-                node.y * 30 + 2 + 10,
-                node.x * 30 + 32 - 10,
+                node.y * SIZE + 2 + int((SIZE/4)),
+                node.x * SIZE + (SIZE + 2) - int((SIZE/4)),
                 #(len(self.board.matrix[node.y]) - node.y) * 30 + 32 - 10,
-                node.y * 30 + 32 - 10,
+                node.y * SIZE + (SIZE + 2) - int((SIZE/4)),
             )
             if icon == 'path':
                 self.canvas.create_oval(*coords, fill='cyan', width=0)
