@@ -7,10 +7,9 @@ class NotImplemented(Exception):
 
 class Astar:
 
-    def __init__(self, mode, board, astar_event_handler):
+    def __init__(self, mode, board):
         self.mode = mode
         self.board = board
-        self.astar_event_handler = astar_event_handler
         self.open = []
 
     def generate_path(self, node):
@@ -51,7 +50,7 @@ class Astar:
         while self.open:
             current_node = self.next_node()
             current_path = self.generate_path(current_node)
-            self.astar_event_handler(current_path, self.open, close_list)
+            yield current_path, self.open, close_list
             close_list.add(current_node)
 
             if current_node is end:
@@ -60,7 +59,7 @@ class Astar:
                 print("CLOSED:")
                 print(close_list)
                 print('LENGHT: {}'.format(len(current_path)))
-                return current_path
+                return current_path, self.open, close_list
 
             self.board.generate_kids(current_node)
             for kid in current_node.kids:
@@ -78,8 +77,6 @@ class Astar:
                     if kid in close_list:
                         print('prop')
                         self.propagate_path_improvements(kid)
-
-            time.sleep(0.2)
 
         return self.generate_path(current_node)
 

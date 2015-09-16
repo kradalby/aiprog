@@ -126,10 +126,11 @@ class Main(Frame):
         # Clear the canvas and redraw the map
         self.createmap(self.current_file)
 
-        astar = Astar(mode, self.board, self.astar_event_handler)
+        astar = Astar(mode, self.board)
         start, end = self.board.start, self.board.end
 
-        path = astar.astar(start, end)
+        for path, open, closed in astar.astar(start, end):
+            self.astar_event_handler(path, open, closed)
 
         #if self.view_level > 0:
         #    self.draw_markers(openlist, 'open')
