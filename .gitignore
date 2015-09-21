@@ -8,6 +8,10 @@ Session.vim
 .netrwhist
 *~
 
+### OSX ###
+.DS_Store
+.AppleDouble
+.LSOverride
 
 ### PyCharm ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm
