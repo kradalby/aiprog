@@ -14,9 +14,11 @@ class Astar:
 
     def generate_path(self, node):
         path = [node]
+        #path_dic = {(node.y, node.x): node}
 
         while node.parent is not None:
             node = node.parent
+         #   path_dic[(node.y, node.x)] = node
             path.insert(0, node)
 
         return path

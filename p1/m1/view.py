@@ -20,6 +20,7 @@ class Main(Frame):
         self.canvas = None
         self.view_level = 0
         self.init_ui()
+        self.node_dic = {}
 
     def init_ui(self):
 
@@ -70,13 +71,13 @@ class Main(Frame):
             for x in range(len(self.board.matrix[y])):
                 coords = (
                     x * SIZE + 3,
-                    #(len(self.board.matrix[y]) - y) * SIZE + 3,
-                    y * SIZE + 3,
+                    (len(self.board.matrix[y]) - y) * SIZE + 3,
+                    #y * SIZE + 3,
                     x * SIZE + (SIZE + 2),
-                    #(len(self.board.matrix[y]) - y) * 30 + 32,
-                    y * SIZE + (SIZE + 2),
+                    (len(self.board.matrix[y]) - y) * SIZE + (SIZE + 2),
+                    #y * SIZE + (SIZE + 2),
                 )
-                self.canvas.create_rectangle(*coords,
+                self.node_dic[(x, y)] = self.canvas.create_rectangle(*coords,
                                              fill=self.color_creator(self.board.matrix[y][x]))
 
     def color_creator(self, node):
@@ -102,21 +103,27 @@ class Main(Frame):
     def draw_markers(self, nodes, icon):
 
         for node in nodes:
-            coords = (
-                node.x * SIZE + 2 + int((SIZE/4)),
-                #(len(self.board.matrix[node.y]) - node.y) * 30 + 2 + 10,
-                node.y * SIZE + 2 + int((SIZE/4)),
-                node.x * SIZE + (SIZE + 2) - int((SIZE/4)),
-                #(len(self.board.matrix[node.y]) - node.y) * 30 + 32 - 10,
-                node.y * SIZE + (SIZE + 2) - int((SIZE/4)),
-            )
+
+            # coords = (
+            #     node.x * SIZE + 2 + int((SIZE/4)),
+            #
+            #     (len(self.board.matrix[node.y]) - node.y) * SIZE + 3,
+            #     #node.y * SIZE + 2 + int((SIZE/4)),
+            #     node.x * SIZE + (SIZE + 2) - int((SIZE/4)),
+            #
+            #     (len(self.board.matrix[node.y]) - node.y) * SIZE + (SIZE + 2),
+            #     #node.y * SIZE + (SIZE + 2) - int((SIZE/4)),
+            # )
+
             if icon == 'path':
-                self.canvas.create_oval(*coords, fill='cyan', width=0)
+                #self.canvas.create_oval(self.node_dic[node.x, node.y], fill='cyan', width=0)
+                self.canvas.itemconfig(self.node_dic[(node.x, node.y)], fill='pink')
             elif icon == 'open':
-                self.canvas.create_oval(*coords, fill='black', width=0)
-            elif icon == 'closed':
-                self.canvas.create_line(*coords)
-                self.canvas.create_line(coords[2], coords[1], coords[0], coords[3])
+                #self.canvas.create_oval(self.node_dic[node.x, node.y], fill='black', width=0)
+                self.canvas.itemconfig(self.node_dic[(node.x, node.y)], fill='blue')
+            # elif icon == 'closed':
+            #     self.canvas.create_line(*coords)
+            #     self.canvas.create_line(coords[2], coords[1], coords[0], coords[3])
 
     def perform_astar(self, mode):
 
