@@ -7,9 +7,8 @@ class NotImplemented(Exception):
 
 class Astar:
 
-    def __init__(self, mode, board):
+    def __init__(self, mode):
         self.mode = mode
-        self.board = board
         self.open = []
 
     def generate_path(self, node):
@@ -63,7 +62,7 @@ class Astar:
                 print('LENGHT: {}'.format(len(current_path)))
                 return current_path, self.open, close_list
 
-            self.board.generate_kids(current_node)
+            current_node.generate_kids()
             for kid in current_node.kids:
 
                 #if kid in close_list:

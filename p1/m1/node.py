@@ -1,5 +1,3 @@
-import math
-
 
 class Node:
     def __init__(self, x, y):
@@ -39,10 +37,10 @@ class Node:
         return self.weight
 
     def calculate_heuristic(self, goal):
-        e = math.sqrt(((self.x - goal.x) ** 2) + ((self.y - goal.y) ** 2))
-        self.h = abs(goal.x - self.x) + abs(goal.y - self.y)
-        self.h += 0.001 * e
+        pass
 
     def calculate_f(self):
         self.f = self.g + self.h
 
+    def generate_kids(self):
+        pass

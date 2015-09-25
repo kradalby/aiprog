@@ -1,6 +1,5 @@
 from ast import literal_eval
-from itertools import product
-from node import Node
+from boardnode import BoardNode as Node
 from astar import Astar
 
 class Board():
@@ -35,7 +34,7 @@ class Board():
         for y in range(self.dimensions[1]):
             self.matrix.append([])
             for x in range(self.dimensions[0]):
-                self.matrix[y].append(Node(x, y))
+                self.matrix[y].append(Node(x, y, self))
 
         self.start = self.matrix[self.start[1]][self.start[0]]
         self.end = self.matrix[self.goal[1]][self.goal[0]]
@@ -82,31 +81,3 @@ class Board():
                     node.kids.append(self.matrix[y+j][x+i])
 
         return self.start, self.end
-
-    def generate_kids(self, node):
-        top = 0
-        left = 0
-        right = len(self.matrix[0]) - 1
-        bottom = len(self.matrix) - 1
-
-        x = node.x
-        y = node.y
-
-        # Make a cartesian product of adjacent Nodes.
-        # Ignores self, out of bounds, diagonals and non-walkables
-        for i, j in product([-1, 0, 1], [-1, 0, 1]):
-            if i == 0 and j == 0:
-                continue
-            if not (left <= (x + i) <= right):
-                continue
-            if not (top <= (y + j) <= bottom):
-                continue
-            if abs(i) + abs(j) > 1:
-                continue
-            try:
-                if not self.matrix[y+j][x+i].walkable:
-                    continue
-            except IndexError:
-                continue
-
-            node.kids.append(self.matrix[y+j][x+i])

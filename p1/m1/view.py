@@ -133,7 +133,7 @@ class Main(Frame):
         # Clear the canvas and redraw the map
         self.createmap(self.current_file)
 
-        astar = Astar(mode, self.board)
+        astar = Astar(mode)
         start, end = self.board.start, self.board.end
 
         for path, open, closed in astar.astar(start, end):
