@@ -121,9 +121,8 @@ class Main(Frame):
             elif icon == 'open':
                 #self.canvas.create_oval(self.node_dic[node.x, node.y], fill='black', width=0)
                 self.canvas.itemconfig(self.node_dic[(node.x, node.y)], fill='blue')
-            # elif icon == 'closed':
-            #     self.canvas.create_line(*coords)
-            #     self.canvas.create_line(coords[2], coords[1], coords[0], coords[3])
+            elif icon == 'closed':
+                self.canvas.itemconfig(self.node_dic[(node.x, node.y)], fill='green')
 
     def perform_astar(self, mode):
 
@@ -151,11 +150,11 @@ class Main(Frame):
 
 
     def astar_event_handler(self, path, open, closed):
-        self.canvas.delete('all')
-        self.draw_map()
-        self.draw_markers(path, 'path')
+        #self.canvas.delete('all')
+        #self.draw_map()
         self.draw_markers(open, 'open')
-        #self.draw_markers(closed, 'closed')
+        self.draw_markers(closed, 'closed')
+        self.draw_markers(path, 'path')
         self.canvas.update()
 
 

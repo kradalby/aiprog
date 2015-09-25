@@ -28,9 +28,9 @@ class Astar:
         kid.g = parent.g + kid.weight
         kid.calculate_heuristic(end)
         kid.calculate_f()
-        print(kid)
 
     def propagate_path_improvements(self, node):
+        print("THIS IS PATH IMP")
         for kid in node.kids:
             if node.g + kid.weight < kid.g:
                 kid.parent = node
