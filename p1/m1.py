@@ -3,8 +3,8 @@ import logging
 
 from tkinter import *
 
-from astar import *
-from view import Main
+from algorithm.astar import *
+from module1.view import Main
 
 
 def center_window(r):

@@ -4,9 +4,9 @@ import logging
 import time
 
 from tkinter import *
-from astar import *
-from node import *
-from board import *
+from algorithm.astar import *
+from module1.boardnode import *
+from module1.board import *
 
 SIZE = 10
 
@@ -93,10 +93,10 @@ class Main(Frame):
 
     def add_boards_to_menu(self, menu):
 
-        files = [f for f in os.listdir('./boards/') if '.txt' in os.path.basename(f)]
+        files = [f for f in os.listdir('./module1/boards/') if '.txt' in os.path.basename(f)]
         files = sorted(files)
         for f in files:
-            fullpath = os.path.join(os.getcwd(), 'boards', f)
+            fullpath = os.path.join(os.getcwd(), 'module1', 'boards', f)
             menu.add_command(label=os.path.basename(f),
                              command=lambda fp=fullpath: self.createmap(f=fp))
 

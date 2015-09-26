@@ -1,4 +1,4 @@
-from node import Node
+from datastructure.node import Node
 import math
 from itertools import product
 

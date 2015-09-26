@@ -1,6 +1,6 @@
 from ast import literal_eval
-from boardnode import BoardNode as Node
-from astar import Astar
+from module1.boardnode import BoardNode as Node
+from algorithm.astar import Astar
 
 class Board():
     def __init__(self, filename):
