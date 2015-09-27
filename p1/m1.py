@@ -1,5 +1,7 @@
 import datetime
 import logging
+import os
+import platform
 
 from tkinter import *
 
@@ -33,4 +35,10 @@ if __name__ == '__main__':
     center_window(root)
     app = Main(root)
 
+    if platform.system() == 'Darwin':
+        os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "Python" to true' ''')
+
     root.mainloop()
+
+    if platform.system() == 'Darwin':
+        os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "iTerm" to true' ''')
