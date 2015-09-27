@@ -1,8 +1,6 @@
 
 class Node:
     def __init__(self, x, y):
-        self.state = "Dont know what this is"
-        self.status = ""
         self.weight = 1
         self.x = x
         self.y = y
