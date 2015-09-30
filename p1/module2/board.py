@@ -1,4 +1,5 @@
 import networkx as nx
+from module2.variable import Variable
 
 
 class Board():
@@ -11,6 +12,7 @@ class Board():
         with open(filename, 'r') as file:
             content = file.read().splitlines()
             temp = content.pop(0).split()
+            print(temp)
 
             self.num_vert = int(temp.pop(0))
             self.num_edge = int(temp.pop(0))
@@ -35,5 +37,10 @@ class Board():
 
 
 
+            print("EDGE: ", self.graph.edges())
+            print("GRAPH: ", self.graph.graph)
+            print('NODES:', self.graph.nodes())
 
+
+            print(self.graph.neighbors('4'))
 

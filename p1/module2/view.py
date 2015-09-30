@@ -6,6 +6,8 @@ from module2.board import *
 import matplotlib.pyplot as plt
 import networkx as nx
 
+from module2.constraint import Constraint
+from util import make_function
 
 class Main():
     def __init__(self, parent):
@@ -47,4 +49,8 @@ class Main():
         plt.ion()
         plt.show()
 
-
+    def run(self):
+        print(self.board.graph)
+        
+        c = Constraint()
+        c.function = make_function(['x', 'y'], '')

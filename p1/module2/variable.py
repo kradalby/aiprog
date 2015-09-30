@@ -7,6 +7,7 @@ class Variable(Node):
         self.id = id
         self.domain = []
         self.f = 0
+        self.kids = []
 
     def __lt__(self, other):
         return len(self) < len(other)

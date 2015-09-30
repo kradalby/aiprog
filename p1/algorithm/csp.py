@@ -48,9 +48,9 @@ class CSP:
         temp_domain = []
         for x in variable.domain:
             valid = False
-            for var in self.variables:
-                if var.id != variable.id:
-                    for y in var.domain:
+            for kid in variables.kids:
+                if kid.id != variable.id:
+                    for y in kid.domain:
                         if constraint.function(x, y):
                             print(x, y)
                             valid = True
