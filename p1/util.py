@@ -1,4 +1,6 @@
 
 
 def make_function(variables, expression, envir=globals()):
-    return eval('(lambda ' + ','.join(variables)[:1] + ': ' + expression + ')', envir)
+    function = '(lambda ' + ','.join(variables) + ': ' + expression + ')'
+    print(function)
+    return eval(function, envir)
