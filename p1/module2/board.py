@@ -1,6 +1,4 @@
-from ast import literal_eval
 import networkx as nx
-import matplotlib.pyplot as plt
 
 
 class Board():
@@ -30,10 +28,7 @@ class Board():
                 temp = content.pop(0).split()
                 self.graph.add_edge(temp.pop(0), temp.pop(0))
 
-        print(self.node_pos)
 
-        nx.draw(self.graph, self.node_pos)
-        plt.show()
 
 
 
