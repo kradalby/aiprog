@@ -25,9 +25,13 @@ class Board():
                 self.graph.add_node(temp[0], x=temp[1], y=temp[2])
                 self.node_pos[str(temp[0])] = (float(temp[1]), float(temp[2]))
 
+
+            self.edge_dic = {}
+
             for _ in range(self.num_edge):
                 temp = content.pop(0).split()
-                self.graph.add_edge(temp.pop(0), temp.pop(0))
+                self.graph.add_edge(temp[0], temp[1])
+                self.edge_dic[str(temp[0])] = (int(temp[1]))
 
 
 

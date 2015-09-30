@@ -42,7 +42,7 @@ class Main():
                              command=lambda fp=fullpath: self.createmap(f=fp))
 
     def draw_map(self):
-
+        plt.clf()
         nx.draw(self.board.graph, self.board.node_pos)
         plt.ion()
         plt.show()
