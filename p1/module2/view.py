@@ -7,13 +7,8 @@ import matplotlib.pyplot as plt
 import networkx as nx
 
 
-
-
-SIZE = 10
-
-class Main(Frame):
+class Main():
     def __init__(self, parent):
-        Frame.__init__(self, parent, background='white')
 
         self.parent = parent
         self.board = None
@@ -24,7 +19,6 @@ class Main(Frame):
 
         menubar = Menu(self.parent)
         self.parent.config(menu=menubar)
-        self.parent.title('M2')
 
         boardsmenu = Menu(menubar, tearoff=0)
 
@@ -50,6 +44,7 @@ class Main(Frame):
     def draw_map(self):
 
         nx.draw(self.board.graph, self.board.node_pos)
+        plt.ion()
         plt.show()
 
 

@@ -17,6 +17,7 @@ class Board():
 
             self.graph = nx.Graph()
             self.node_pos = {}
+
             for _ in range(self.num_vert):
 
                 temp = content.pop(0).split()

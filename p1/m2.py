@@ -7,10 +7,9 @@ from tkinter import *
 
 from module2.view import Main
 
-
 def center_window(r):
 
-    width = 1200
+    width = 1000
     height = 800
 
     screen_width = r.winfo_screenwidth()
@@ -39,6 +38,5 @@ if __name__ == '__main__':
 
     root.mainloop()
 
-
-#    if platform.system() == 'Darwin':
-#        os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "iTerm" to true' ''')
+  #  if platform.system() == 'Darwin':
+#     os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "iTerm" to true' ''')
