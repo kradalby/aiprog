@@ -55,7 +55,7 @@ class Main():
         print(self.board.graph)
 
         domain = [1, 2, 3, 4]
-        function = make_function(['n'], 'n[0] != n[1]')
+        function = make_function(['x, y'], 'x != y')
 
         csp = CSP()
 
