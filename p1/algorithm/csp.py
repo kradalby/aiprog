@@ -22,8 +22,9 @@ class CSP:
             if len(variable) != old_variable_domain:
                 for const in self.constraints:
                     if variable in const.variables and const != constraint:
+                        print('derp')
                         for var in constraint.variables:
-                            if variable != var:
+                            if variable.id != var.id:
                                 self.queue.append((var, constraint))
 
     def revise(self, variable, constraint):
@@ -34,21 +35,25 @@ class CSP:
             for var in constraint.variables:
                 if var.id != variable.id:
                     for var_domain in var.domain:
-                        print(domain_element, var_domain)
                         if constraint.function(domain_element, var_domain):
                             valid = True
                             break
             if valid:
                 temp_domain.append(domain_element)
 
+        print(temp_domain)
         variable.domain = temp_domain
 
     def rerun(self, variable):
-        for const in self.constraints:
-            if variable in const:
+        print(variable.domain)
+        for constraint in self.constraints:
+            if variable in constraint.variables:
+                print(variable.domain)
                 for var in self.variables:
-                    if variable != var:
+                    if variable.id != var.id:
+                        print('add to queue')
                         self.queue.append((var, constraint))
+        self.domain_filtering_loop()
 
     def is_finished(self):
         for variable in self.variables:

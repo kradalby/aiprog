@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 import networkx as nx
 
 from algorithm.csp import CSP
-from datastructure.csp import Constraint, Variable
+from algorithm.astarcsp import AstarCSP
+from datastructure.csp import Constraint, Variable, CSPState
 from util import make_function
 
 class Main():
@@ -56,6 +57,7 @@ class Main():
 
         domain = [1, 2, 3, 4]
         function = make_function(['x, y'], 'x != y')
+        COLORS = ['#ff8080', '#ffcc80', '#99ff80', '#80ffff', '#9980ff', '#ff80cc', '#e5ff80', '#80b3ff', '#e680ff']
 
         csp = CSP()
 
@@ -81,7 +83,23 @@ class Main():
 
         csp.domain_filtering_loop()
 
+        state = CSPState()
+
+        state.csp = csp
+
+        astar_csp = AstarCSP()
+
+        astar_csp.csp_state = state
+
+
         for v in csp.variables:
             print(v.domain)
 
         print('lol')
+
+        astar_csp.initialize()
+
+        print('loli2')
+
+        for j in astar_csp.run()[-1][0][0].csp.variables:
+            print(j.domain)

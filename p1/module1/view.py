@@ -136,7 +136,7 @@ class Main(Frame):
         astar = Astar(mode)
         start, end = self.board.start, self.board.end
 
-        for path, open, closed in astar.astar(start, end):
+        for path, open, closed in astar.astar(start, end=end):
             self.astar_event_handler(path, open, closed)
 
         #if self.view_level > 0:

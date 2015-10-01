@@ -39,7 +39,7 @@ class Astar:
                 self.propagate_path_improvements(kid)
 
 
-    def astar(self, start, end):
+    def astar(self, start, end=None):
         self.open = []
         close_list = set()
 
