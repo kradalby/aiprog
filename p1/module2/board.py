@@ -12,7 +12,6 @@ class Board():
         with open(filename, 'r') as file:
             content = file.read().splitlines()
             temp = content.pop(0).split()
-            print(temp)
 
             self.num_vert = int(temp.pop(0))
             self.num_edge = int(temp.pop(0))

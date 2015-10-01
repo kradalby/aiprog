@@ -10,6 +10,7 @@ class Astar:
     def __init__(self, mode):
         self.mode = mode
         self.open = []
+        self.closed = set()
 
     def generate_path(self, node):
         path = [node]
@@ -41,41 +42,42 @@ class Astar:
 
     def astar(self, start, end=None):
         self.open = []
-        close_list = set()
 
         start.g = 0
         start.calculate_heuristic(end)
         start.calculate_f()
         self.append_node(start)
 
+        print(self.open)
         while self.open:
             current_node = self.next_node()
             current_path = self.generate_path(current_node)
-            yield current_path, self.open, close_list
-            close_list.add(current_node)
+            yield current_path, self.open, self.closed
+            self.closed.add(current_node)
+            print(self.closed)
 
             if current_node is end:
                 print("OPEN:")
                 print(self.open)
                 print("CLOSED:")
-                print(close_list)
+                print(self.closed)
                 print('LENGHT: {}'.format(len(current_path)))
-                return current_path, self.open, close_list
+                return current_path, self.open, self.closed
 
             current_node.generate_kids()
             for kid in current_node.kids:
 
-                #if kid in close_list:
+                #if kid in self.closed:
                 #    continue
 
-                if kid not in self.open and kid not in close_list:
+                if kid not in self.open and kid not in self.closed:
                     self.attach_and_evaluate(kid, current_node, end)
                     self.append_node(kid)
 
                 elif current_node.g + kid.weight < kid.g:
                     self.attach_and_evaluate(kid, current_node, end)
 
-                    if kid in close_list:
+                    if kid in self.closed:
                         print('prop')
                         self.propagate_path_improvements(kid)
 

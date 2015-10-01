@@ -41,17 +41,13 @@ class CSP:
             if valid:
                 temp_domain.append(domain_element)
 
-        print(temp_domain)
         variable.domain = temp_domain
 
     def rerun(self, variable):
-        print(variable.domain)
         for constraint in self.constraints:
             if variable in constraint.variables:
-                print(variable.domain)
                 for var in self.variables:
                     if variable.id != var.id:
-                        print('add to queue')
                         self.queue.append((var, constraint))
         self.domain_filtering_loop()
 
