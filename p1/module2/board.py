@@ -33,3 +33,5 @@ class Board():
                 temp = content.pop(0).split()
                 self.graph.add_edge(temp[0], temp[1])
                 self.edge_dic[str(temp[0])] = (int(temp[1]))
+
+            #print("This is edges: ", self.graph.edge)

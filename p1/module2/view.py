@@ -49,6 +49,7 @@ class Main():
     def draw_map(self):
         plt.clf()
         nx.draw(self.board.graph, self.board.node_pos)
+        #nx.draw_networkx_nodes(self.board.graph, self.board.node_pos, nodelist=[('0'), ('1')], node_color='b')
         plt.ion()
         plt.show()
 
