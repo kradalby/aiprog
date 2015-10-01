@@ -1,5 +1,5 @@
 import networkx as nx
-from module2.variable import Variable
+from datastructure.csp import Variable
 
 
 class Board():
@@ -34,13 +34,3 @@ class Board():
                 temp = content.pop(0).split()
                 self.graph.add_edge(temp[0], temp[1])
                 self.edge_dic[str(temp[0])] = (int(temp[1]))
-
-
-
-            print("EDGE: ", self.graph.edges())
-            print("GRAPH: ", self.graph.graph)
-            print('NODES:', self.graph.nodes())
-
-
-            print(self.graph.neighbors('4'))
-

@@ -19,10 +19,27 @@ class Variable(Node):
         return len(self) == len(other)
 
     def __str__(self):
-        return str(self.domain)
+        return str(self.id)
 
     def __repr__(self):
-        return str(self.domain)
+        return str(self.id)
 
     def __len__(self):
         return len(self.domain)
+
+
+class Constraint(Node):
+
+    def __init__(self):
+        self.f = 0
+        self.variables = []
+        self.function = None
+
+    def __str__(self):
+        return str(self.variables)
+
+    def __repr__(self):
+        return str(self.variables)
+
+    def __len__(self):
+        return len(self.variables)
