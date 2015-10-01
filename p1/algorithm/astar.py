@@ -56,7 +56,7 @@ class Astar:
             self.closed.add(current_node)
             print(self.closed)
 
-            if current_node is end:
+            if current_node is end or current_node.end:
                 print("OPEN:")
                 print(self.open)
                 print("CLOSED:")

@@ -22,10 +22,10 @@ class Variable(Node):
         return len(self) == len(other)
 
     def __str__(self):
-        return str(self.id)
+        return 'VARIABLE - ID: {}, D: {}'.format(self.id, self.domain)
 
     def __repr__(self):
-        return str(self.id)
+        return 'VARIABLE - ID: {}, D: {}'.format(self.id, self.domain)
 
     def __len__(self):
         return len(self.domain)
@@ -39,10 +39,10 @@ class Constraint(Node):
         self.function = None
 
     def __str__(self):
-        return str(self.variables)
+        return 'CONSTRAINT - VARS: {}'.format(self.variables)
 
     def __repr__(self):
-        return str(self.variables)
+        return 'CONSTRAINT - VARS: {}'.format(self.variables)
 
     def __len__(self):
         return len(self.variables)
@@ -57,16 +57,17 @@ class CSPState(Node):
         self.f = 0
         self.g = 0
         self.h = 0
-        self.weight = 10
+        self.weight = 1
         self.parent = None
         self.kids = []
-        self.goal = False
+        self.colored_node = None
+        self.end = False
 
     def __str__(self):
-        return str(self.csp)
+        return 'CSPState: end: {}, H: {}, F: {}'.format(self.end, self.h, self.f)
 
     def __repr__(self):
-        return str(self.csp)
+        return 'CSPState: end: {}, H: {}, F: {}'.format(self.end, self.h, self.f)
 
     def __hash__(self):
         return hash(str(uuid.uuid1()))
@@ -74,7 +75,9 @@ class CSPState(Node):
 
     def generate_kids(self):
         kids = []
+        print('CSP variables: ',self.csp.variables)
         variable = [x for x in sorted(self.csp.variables) if len(x) != 0][-1]
+        print('CSP var after filt: ', variable)
 
         if variable is None:
             return []
@@ -89,11 +92,12 @@ class CSPState(Node):
                     variable_copy = n
                     n.domain = [element]
                     n.color = element
+                    self.colored_node = n
 
             csp_copy.rerun(variable_copy)
 
             for n in csp_copy.variables:
-                print(n.domain)
+                print(n)
 
             if not csp_copy.is_impossibrew():
                 state = CSPState()
@@ -102,13 +106,10 @@ class CSPState(Node):
                 self.kids.append(state)
 
                 if csp_copy.is_finished():
-                    self.goal = True
-
-    def arc_cost(self):
-        return 10
+                    self.end = True
 
     def calculate_heuristic(self, *args):
         heuristic = 0
         for variable in self.csp.variables:
-            heuristic += len(variable) # - 1
-        return heuristic
+            heuristic += len(variable) - 1
+        self.h = heuristic

@@ -12,6 +12,10 @@ from datastructure.csp import Constraint, Variable, CSPState
 from util import make_function
 
 class Main():
+
+    COLORS = ['#ff8080', '#ffcc80', '#99ff80', '#80ffff', '#9980ff', '#ff80cc', '#e5ff80', '#80b3ff', '#e680ff']
+    BLACK = '#000000'
+
     def __init__(self, parent):
 
         self.parent = parent
@@ -53,26 +57,38 @@ class Main():
         plt.ion()
         plt.show()
 
+    def generate_colors(state):
+        pass
+
+
+
+
     def run(self):
 
         domain = [1, 2, 3, 4]
         function = make_function(['x, y'], 'x != y')
-        COLORS = ['w', 'r', 'b', 'g', 'y', 'p', '', '', '']
 
         csp = CSP()
         edges = self.board.graph.edges()
 
+        nodes = {}
+
         for node in self.board.graph.nodes():
-            var = Variable(str(node))
+            id = str(node)
+            var = Variable(id)
+            nodes[id] = var
             var.domain = domain
             csp.variables.append(var)
 
-            c = Constraint()
-            c.function = function
-            c.variables.append(self.board.graph.neighbors(node))
-            csp.constraints.append(c)
+        for key in nodes.keys():
+            for ne in self.board.graph.neighbors(key):
+                c = Constraint()
+                c.function = function
+                c.variables.append(nodes[ne])
+                c.variables.append(nodes[key])
+                csp.constraints.append(c)
 
-        print("this is conts:!!! ::: : :", csp.constraints)
+        #print("this is conts:!!! ::: : :", csp.constraints)
 
 
         # edges = self.board.graph.edges()
@@ -97,6 +113,15 @@ class Main():
 
         astar_csp.csp_state = state
         astar_csp.initialize()
-        while astar_csp.csp_state.csp.is_finished():
-            for node in astar_csp.csp_state.variables:
-                nx.draw_networkx_nodes(self.board.graph, self.board.node_pos, nodelist=[(node.id)], node_color=COLORS[node.color])
+
+
+        for r in astar_csp.run():
+            print('astar run', r)
+            if r[2]:
+                print(r[2])
+                print(list(r[2]))
+                s = list(r[2])[0]
+                self.color_node(s.colored_node)
+
+        for node in astar_csp.csp_state.variables:
+            nx.draw_networkx_nodes(self.board.graph, self.board.node_pos, nodelist=[(node.id)], node_color=COLORS[node.color])

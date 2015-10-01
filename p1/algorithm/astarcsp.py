@@ -15,11 +15,11 @@ class AstarCSP:
     def run(self):
         generator = self.astar.astar(self.csp_state)
 
-        result = [x for x in generator][-1]
+        #result = [x for x in generator][-1]
 
-        self.csp_state = list(astar_csp.astar.closed)[-1]
+        #self.csp_state = list(astar_csp.astar.closed)[-1]
 
-        print(self.astar.closed)
-        print(self.astar.open)
+        #print(self.astar.closed)
+        #print(self.astar.open)
 
-        return result
+        return generator
