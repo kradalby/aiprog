@@ -60,19 +60,28 @@ class Main():
         COLORS = ['w', 'r', 'b', 'g', 'y', 'p', '', '', '']
 
         csp = CSP()
+        edges = self.board.graph.edges()
 
         for node in self.board.graph.nodes():
             var = Variable(str(node))
             var.domain = domain
             csp.variables.append(var)
 
-        edges = self.board.graph.edges()
-        for i in range(len(edges)):
             c = Constraint()
             c.function = function
-            c.variables.append(csp.variables[int(edges[i][0])])
-            c.variables.append(csp.variables[int(edges[i][1])])
+            c.variables.append(self.board.graph.neighbors(node))
             csp.constraints.append(c)
+
+        print("this is conts:!!! ::: : :", csp.constraints)
+
+
+        # edges = self.board.graph.edges()
+        # for i in range(len(edges)):
+        #     c = Constraint()
+        #     c.function = function
+        #     c.variables.append(csp.variables[int(edges[i][0])])
+        #     c.variables.append(csp.variables[int(edges[i][1])])
+        #     csp.constraints.append(c)
 
 
         csp.populate_queue()
