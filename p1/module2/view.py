@@ -68,8 +68,16 @@ class Main():
 
     def redraw_nodes_with_color(self, state):
         self.ax.clear()
-        print('GRAPH: ', self.board.graph)
-        nx.draw(self.board.graph, self.board.node_pos, ax=self.ax, node_color=[Main.COLORS[random.randint(1,4)] for x in range(len(self.board.graph))])
+        color_list = []
+        for node_id in self.board.node_pos.keys():
+            for node in state.csp.variables:
+                if node.id == node_id:
+                    color_list.append(node.domain[0] if len(node.domain) == 1 else 0)
+        print('GRAPH: ', color_list)
+
+        #nx.draw(self.board.graph, self.board.node_pos, ax=self.ax, node_color=[Main.COLORS[random.randint(1,4)] for x in range(len(self.board.graph))])
+        nx.draw(self.board.graph, self.board.node_pos, ax=self.ax, node_color=color_list)
+
         self.canvas.draw()
 
     def run(self):
@@ -111,7 +119,6 @@ class Main():
 
         csp.populate_queue()
 
-
         csp.domain_filtering_loop()
 
         state = CSPState()
@@ -126,11 +133,10 @@ class Main():
 
         for r in astar_csp.run():
             #print('astar run', r)
-            if r[2]:
+            if r[0]:
 
                 #print(r[2])
                 #print(list(r[2]))
-                s = list(r[2])[0]
+                s = r[0][-1]
                 self.redraw_nodes_with_color(s)
                 #self.color_node(s.colored_node)
-
