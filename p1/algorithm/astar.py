@@ -30,12 +30,10 @@ class Astar:
         kid.calculate_f()
 
     def propagate_path_improvements(self, node):
-        print("THIS IS PATH IMP")
         for kid in node.kids:
             if node.g + kid.weight < kid.g:
                 kid.parent = node
                 kid.g = node.g + kid.weight
-                print(kid.g)
                 kid.calculate_f()
                 self.propagate_path_improvements(kid)
 
@@ -80,7 +78,6 @@ class Astar:
                     self.attach_and_evaluate(kid, current_node, end)
 
                     if kid in self.closed:
-                        print('prop')
                         self.propagate_path_improvements(kid)
 
         return self.generate_path(current_node)

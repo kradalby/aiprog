@@ -64,7 +64,6 @@ class CSPState(Node):
         self.weight = 1
         self.parent = None
         self.kids = []
-        self.colored_node = None
         self.end = False
 
     def __str__(self):
@@ -81,11 +80,7 @@ class CSPState(Node):
         kids = []
         variable = [x for x in sorted(self.csp.variables) if len(x) != 0][-1]
 
-        if variable is None:
-            return []
-
         for element in variable.domain:
-            print(element)
             variable_copy = None
             csp_copy = copy.deepcopy(self.csp)
 
@@ -93,8 +88,6 @@ class CSPState(Node):
                 if n.id == variable.id:
                     variable_copy = n
                     n.domain = [element]
-                    n.color = element
-                    self.colored_node = n
 
             csp_copy.rerun(variable_copy)
 
@@ -120,5 +113,5 @@ class CSPState(Node):
     def calculate_heuristic(self, *args):
         heuristic = 0
         for variable in self.csp.variables:
-            heuristic += len(variable) #- 1
+            heuristic += len(variable) - 1
         self.h = heuristic
