@@ -1,6 +1,7 @@
 from datastructure.node import Node
 import copy
 import uuid
+import time
 
 
 class Variable(Node):
@@ -46,6 +47,9 @@ class Constraint(Node):
 
     def __len__(self):
         return len(self.variables)
+
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
 
 
 class CSPState(Node):
@@ -96,20 +100,26 @@ class CSPState(Node):
 
             csp_copy.rerun(variable_copy)
 
-            for n in csp_copy.variables:
-                print(n)
+            # for n in csp_copy.variables:
+            #     print(n)
 
-            if not csp_copy.is_impossibrew():
+            if csp_copy.is_valid():
+                time.sleep(1.5)
+                print('POSSIBLE')
+                for n in csp_copy.variables:
+                    print(n)
+                print('HEURISTIC: ', self.h)
                 state = CSPState()
                 state.csp = csp_copy
                 state.parent = self
                 self.kids.append(state)
 
                 if csp_copy.is_finished():
+                    print('POSSIBLE - FINISHED')
                     self.end = True
 
     def calculate_heuristic(self, *args):
         heuristic = 0
         for variable in self.csp.variables:
-            heuristic += len(variable) - 1
+            heuristic += len(variable) #- 1
         self.h = heuristic

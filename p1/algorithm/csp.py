@@ -22,7 +22,6 @@ class CSP:
             if len(variable) != old_variable_domain:
                 for const in self.constraints:
                     if variable in const.variables and const != constraint:
-                        print('derp')
                         for var in constraint.variables:
                             if variable.id != var.id:
                                 self.queue.append((var, constraint))
@@ -53,15 +52,17 @@ class CSP:
 
     def is_finished(self):
         for variable in self.variables:
-            if len(variable) > 1:
+            if len(variable) == 1:
                 return False
         return True
 
-    def is_impossibrew(self):
+    def is_valid(self):
         for variable in self.variables:
             if len(variable) == 0:
-                return True
-        return False
+                print('INVALID')
+                return False
+        print('VALID')
+        return True
 
 
 if __name__ == '__main__':

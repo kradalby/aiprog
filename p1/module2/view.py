@@ -118,10 +118,10 @@ class Main():
         for r in astar_csp.run():
             print('astar run', r)
             if r[2]:
-                print(r[2])
-                print(list(r[2]))
+                #print(r[2])
+                #print(list(r[2]))
                 s = list(r[2])[0]
-                self.color_node(s.colored_node)
+                #self.color_node(s.colored_node)
 
         for node in astar_csp.csp_state.variables:
             nx.draw_networkx_nodes(self.board.graph, self.board.node_pos, nodelist=[(node.id)], node_color=COLORS[node.color])
