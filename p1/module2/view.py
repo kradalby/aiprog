@@ -1,10 +1,14 @@
 import os
 import logging
+import random
 
 from tkinter import *
 from module2.board import *
-import matplotlib.pyplot as plt
 import networkx as nx
+import matplotlib
+matplotlib.use("TkAgg")
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+from matplotlib.figure import Figure
 
 from algorithm.csp import CSP
 from algorithm.astarcsp import AstarCSP
@@ -13,8 +17,8 @@ from util import make_function
 
 class Main():
 
-    COLORS = ['#ff8080', '#ffcc80', '#99ff80', '#80ffff', '#9980ff', '#ff80cc', '#e5ff80', '#80b3ff', '#e680ff']
     BLACK = '#000000'
+    COLORS = [BLACK, '#ffcc80', '#99ff80', '#80ffff', '#9980ff', '#ff80cc', '#e5ff80', '#80b3ff', '#e680ff']
 
     def __init__(self, parent):
 
@@ -34,6 +38,14 @@ class Main():
 
         self.add_boards_to_menu(boardsmenu)
 
+        self.figure = Figure()
+        self.ax = self.figure.add_subplot(111)
+        self.canvas = FigureCanvasTkAgg(self.figure, master=self.parent)
+        self.canvas.show()
+        self.canvas.get_tk_widget().pack(side=BOTTOM, fill=BOTH, expand=True)
+
+
+
     def createmap(self, f=None):
         logging.debug('Creating map from %s' % os.path.basename(f))
         self.current_file = f
@@ -42,7 +54,6 @@ class Main():
         self.run()
 
     def add_boards_to_menu(self, menu):
-
         files = [f for f in os.listdir('./module2/boards/') if '.txt' in os.path.basename(f)]
         files = sorted(files)
         for f in files:
@@ -51,17 +62,15 @@ class Main():
                              command=lambda fp=fullpath: self.createmap(f=fp))
 
     def draw_map(self):
-        plt.clf()
-        nx.draw(self.board.graph, self.board.node_pos)
+        nx.draw(self.board.graph, self.board.node_pos, ax=self.ax, node_color=['#000000' for x in range(len(self.board.graph))])
         #nx.draw_networkx_nodes(self.board.graph, self.board.node_pos, nodelist=[('0'), ('1')], node_color='b')
-        plt.ion()
-        plt.show()
+        self.canvas.draw()
 
-    def generate_colors(state):
-        pass
-
-
-
+    def redraw_nodes_with_color(self, state):
+        self.ax.clear()
+        print('GRAPH: ', self.board.graph)
+        nx.draw(self.board.graph, self.board.node_pos, ax=self.ax, node_color=[Main.COLORS[random.randint(1,4)] for x in range(len(self.board.graph))])
+        self.canvas.draw()
 
     def run(self):
 
@@ -118,10 +127,10 @@ class Main():
         for r in astar_csp.run():
             #print('astar run', r)
             if r[2]:
+
                 #print(r[2])
                 #print(list(r[2]))
                 s = list(r[2])[0]
+                self.redraw_nodes_with_color(s)
                 #self.color_node(s.colored_node)
 
-        for node in astar_csp.csp_state.variables:
-            nx.draw_networkx_nodes(self.board.graph, self.board.node_pos, nodelist=[(node.id)], node_color=COLORS[node.color])

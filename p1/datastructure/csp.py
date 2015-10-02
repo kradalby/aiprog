@@ -102,7 +102,7 @@ class CSPState(Node):
             #     print(n)
 
             if csp_copy.is_valid():
-                time.sleep(0.5)
+                #time.sleep(0.5)
                 print('POSSIBLE')
                 for n in csp_copy.variables:
                     print(n)
