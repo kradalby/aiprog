@@ -79,9 +79,7 @@ class CSPState(Node):
 
     def generate_kids(self):
         kids = []
-        print('CSP variables: ',self.csp.variables)
         variable = [x for x in sorted(self.csp.variables) if len(x) != 0][-1]
-        print('CSP var after filt: ', variable)
 
         if variable is None:
             return []
@@ -104,7 +102,7 @@ class CSPState(Node):
             #     print(n)
 
             if csp_copy.is_valid():
-                time.sleep(1.5)
+                time.sleep(0.5)
                 print('POSSIBLE')
                 for n in csp_copy.variables:
                     print(n)
@@ -112,11 +110,12 @@ class CSPState(Node):
                 state = CSPState()
                 state.csp = csp_copy
                 state.parent = self
-                self.kids.append(state)
 
-                if csp_copy.is_finished():
+                if state.csp.is_finished():
                     print('POSSIBLE - FINISHED')
-                    self.end = True
+                    state.end = True
+
+                self.kids.append(state)
 
     def calculate_heuristic(self, *args):
         heuristic = 0

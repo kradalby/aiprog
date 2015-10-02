@@ -48,13 +48,15 @@ class Astar:
         start.calculate_f()
         self.append_node(start)
 
-        print(self.open)
+        print('ASTAR START')
+
         while self.open:
             current_node = self.next_node()
             current_path = self.generate_path(current_node)
             yield current_path, self.open, self.closed
             self.closed.add(current_node)
-            print(self.closed)
+
+            print('ASTAR NODE INFO:', current_node.end)
 
             if current_node is end or current_node.end:
                 print("OPEN:")

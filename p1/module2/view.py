@@ -116,7 +116,7 @@ class Main():
 
 
         for r in astar_csp.run():
-            print('astar run', r)
+            #print('astar run', r)
             if r[2]:
                 #print(r[2])
                 #print(list(r[2]))

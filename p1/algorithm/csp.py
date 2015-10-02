@@ -52,7 +52,7 @@ class CSP:
 
     def is_finished(self):
         for variable in self.variables:
-            if len(variable) == 1:
+            if len(variable) != 1:
                 return False
         return True
 
