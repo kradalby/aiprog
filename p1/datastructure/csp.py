@@ -77,38 +77,43 @@ class CSPState(Node):
 
 
     def generate_kids(self):
-        kids = []
-        variable = [x for x in sorted(self.csp.variables) if len(x) != 0][-1]
 
-        for element in variable.domain:
-            variable_copy = None
-            csp_copy = copy.deepcopy(self.csp)
+        #variable = [x for x in sorted(self.csp.variables) if len(x) != 0][0]
 
-            for n in csp_copy.variables:
-                if n.id == variable.id:
-                    variable_copy = n
-                    n.domain = [element]
+        #print("This is the variables in generateKidsd:", variable)
+        for variable in sorted(self.csp.variables):
+            if len(variable) > 1:
+                for element in variable.domain:
+                    variable_copy = None
+                    csp_copy = copy.deepcopy(self.csp)
 
-            csp_copy.rerun(variable_copy)
+                    for n in csp_copy.variables:
+                        if n.id == variable.id:
+                            variable_copy = n
+                            n.domain = [element]
 
-            # for n in csp_copy.variables:
-            #     print(n)
+                    csp_copy.rerun(variable_copy)
 
-            if csp_copy.is_valid():
-                #time.sleep(0.5)
-                print('POSSIBLE')
-                for n in csp_copy.variables:
-                    print(n)
-                print('HEURISTIC: ', self.h)
-                state = CSPState()
-                state.csp = csp_copy
-                state.parent = self
+                    # for n in csp_copy.variables:
+                    #     print(n)
 
-                if state.csp.is_finished():
-                    print('POSSIBLE - FINISHED')
-                    state.end = True
+                    if csp_copy.is_valid():
+                        #time.sleep(0.5)
+                        print('POSSIBLE')
+                        for n in csp_copy.variables:
+                            print(n)
+                        print('HEURISTIC: ', self.h)
+                        state = CSPState()
+                        state.csp = csp_copy
+                        state.parent = self
 
-                self.kids.append(state)
+                        if state.csp.is_finished():
+                            print('POSSIBLE - FINISHED')
+                            state.end = True
+
+                        self.kids.append(state)
+                        #print("This is kids", self.kids)
+                break
 
     def calculate_heuristic(self, *args):
         heuristic = 0

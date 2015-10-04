@@ -86,8 +86,9 @@ class Astar:
         if self.mode == "dfs":
             return self.open.pop()
         else:
-            return self.open.pop(0)
-
+            node =  self.open.pop(0)
+            print("Next node is: ", node, ", H valuse is: ", node.h)
+            return node
     def append_node(self, node):
         if self.mode == "astar":
             self.open.append(node)
