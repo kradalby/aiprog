@@ -117,9 +117,9 @@ class Main():
         #     csp.constraints.append(c)
 
 
-        csp.populate_queue()
+        #csp.populate_queue()
 
-        csp.domain_filtering_loop()
+        #csp.domain_filtering_loop()
 
         state = CSPState()
 
