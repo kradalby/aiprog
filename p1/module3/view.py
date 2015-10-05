@@ -51,18 +51,18 @@ class Main(Frame):
     def draw_map(self):
         self.canvas.delete('all')
 
-        for y in range(len(self.board.matrix) - 1, -1, -1):
-            for x in range(len(self.board.matrix[y])):
-                coords = (
-                    x * SIZE + 3,
-                    (len(self.board.matrix[y]) - y) * SIZE + 3,
-                    #y * SIZE + 3,
-                    x * SIZE + (SIZE + 2),
-                    (len(self.board.matrix[y]) - y) * SIZE + (SIZE + 2),
-                    #y * SIZE + (SIZE + 2),
-                )
-                self.node_dic[(x, y)] = self.canvas.create_rectangle(*coords,
-                                             fill=self.color_creator(self.board.matrix[y][x]))
+        # for y in range(len(self.board.matrix) - 1, -1, -1):
+        #     for x in range(len(self.board.matrix[y])):
+        #         coords = (
+        #             x * SIZE + 3,
+        #             (len(self.board.matrix[y]) - y) * SIZE + 3,
+        #             #y * SIZE + 3,
+        #             x * SIZE + (SIZE + 2),
+        #             (len(self.board.matrix[y]) - y) * SIZE + (SIZE + 2),
+        #             #y * SIZE + (SIZE + 2),
+        #         )
+        #         self.node_dic[(x, y)] = self.canvas.create_rectangle(*coords,
+        #                                      fill=self.color_creator(self.board.matrix[y][x]))
 
     def color_creator(self, node):
         if node.one:
@@ -72,10 +72,10 @@ class Main(Frame):
 
     def add_boards_to_menu(self, menu):
 
-        files = [f for f in os.listdir('./module1/boards/') if '.txt' in os.path.basename(f)]
+        files = [f for f in os.listdir('./module3/boards/') if '.txt' in os.path.basename(f)]
         files = sorted(files)
         for f in files:
-            fullpath = os.path.join(os.getcwd(), 'module1', 'boards', f)
+            fullpath = os.path.join(os.getcwd(), 'module3', 'boards', f)
             menu.add_command(label=os.path.basename(f),
                              command=lambda fp=fullpath: self.createmap(f=fp))
 
@@ -89,4 +89,3 @@ class Main(Frame):
 
         for row in self.board.row:
                 constraints[(0, row)] = range(len(self.board.row))
-
