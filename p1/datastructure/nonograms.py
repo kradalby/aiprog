@@ -1,5 +1,4 @@
 from datastructure.node import Node
-from algorithm.csp import CSP
 import copy
 import uuid
 import time
@@ -11,8 +10,6 @@ class Variable(Node):
         self.id = id
         self.domain = []
         self.f = 0
-        self.kids = []
-        self.color = 0
 
     def __lt__(self, other):
         return len(self) < len(other)
@@ -68,44 +65,6 @@ class CSPState(Node):
     def __hash__(self):
         return hash(self.hash)
 
-
-    #def generate_kids(self):
-    #    for variable in sorted(self.csp.variables):
-    #        if len(variable) > 1:
-    #            for element in variable.domain:
-    #                variable_copy = None
-
-    #                #new_csp = copy.deepcopy(self.csp)
-    #                new_csp = CSP()
-    #                new_csp.constraints = self.csp.constraints
-
-    #                for n in self.csp.variables:
-    #                    new_csp.variables.append(copy.deepcopy(n))
-    #                    if n.id == variable.id:
-    #                        variable_copy = n
-    #                        n.domain = [element]
-
-    #                new_csp.rerun(variable_copy)
-
-    #                # for n in csp_copy.variables:
-    #                #     print(n)
-
-    #                if new_csp.is_valid(variable_copy):
-    #                    print('POSSIBLE')
-    #                    for n in new_csp.variables:
-    #                        print(n)
-    #                    print('HEURISTIC: ', self.h)
-    #                    state = CSPState()
-    #                    state.csp = new_csp
-    #                    state.parent = self
-
-    #                    if state.csp.is_finished():
-    #                        print('POSSIBLE - FINISHED')
-    #                        state.end = True
-
-    #                    self.kids.append(state)
-    #            break
-
     def generate_kids(self):
         for variable in sorted(self.variables.values()):
             if len(variable) > 1:
@@ -125,9 +84,7 @@ class CSPState(Node):
                     new_state.gac.rerun(new_state.variables[variable.id])
 
                     if new_state.is_valid(new_variable):
-                        #print('HEURISTIC: ', self.h)
-                        # for var in new_state.variables.values():
-                        #     print(var)
+                        print('HEURISTIC: ', self.h)
                         new_state.parent = self
 
                         if new_state.is_finished():
@@ -150,15 +107,6 @@ class CSPState(Node):
         return True
 
     def is_valid(self, node):
-        #if len(node.domain) == 1:
-        #    for constraint in self.constraints:
-        #        if node in constraints.variables:
-        #            var0 = constraints.variables[0]
-        #            var1 = constraints.variables[0]
-        #            if var0[0] == var1[0]:
-        #                print('INVALID - CONSTRAINT NOT MET')
-        #                return False
-
         for variable in self.variables.values():
             if len(variable) == 0:
                 #print('INVALID - DOMAIN IS TO LITTLE')

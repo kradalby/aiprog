@@ -12,7 +12,7 @@ from matplotlib.figure import Figure
 
 from algorithm.gac import GAC
 from algorithm.astarcsp import AstarCSP
-from datastructure.csp import Constraint, Variable, CSPState
+from datastructure.vc import Constraint, Variable, CSPState
 from util import make_function
 
 class Main():
