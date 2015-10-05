@@ -16,7 +16,7 @@ class CSP:
 
             variable, constraint = self.queue.pop(0)
 
-            old_variable_domain = len(variable.domain)
+            old_variable_domain = len(variable)
 
             self.revise(variable, constraint)
 
@@ -57,11 +57,19 @@ class CSP:
                 return False
         return True
 
-    def is_valid(self):
+    def is_valid(self, node):
         for variable in self.variables:
             if len(variable) == 0:
                 print('INVALID')
                 return False
+
+        for constraint in self.constraints:
+            if node in constraint.variables:
+                #print("This is constrint variables: ", constraint.variables)
+                if len(constraint.variables[0]) == len(constraint.variables[1]):
+                    if len(constraint.variables[0]) == 1 and len(constraint.variables[1]) == 1:
+                        print('INVALID Domain')
+                        return False
         print('VALID')
         return True
 
