@@ -94,13 +94,15 @@ class Main(Frame):
         constraints = {}
 
         for row in range(len(self.board.rows)):
-            constraints[(0, row)] = [(1, x) for x in range(len(self.board.rows))]
+            constraints[(0, row)] = [(1, x) for x in range(len(self.board.cols))]
             node = Variable((0, row))
             node.domain = generate_permutations(self.board.rows[row], len(self.board.rows))
+            #print("xxxxx", self.board.rows[row])
+            print(node.domain)
             nodes[(0, row)] = node
 
         for col in range(len(self.board.cols)):
-            constraints[(1, col)] = [(0, x) for x in range(len(self.board.cols))]
+            constraints[(1, col)] = [(0, x) for x in range(len(self.board.rows))]
             node = Variable((1, col))
             node.domain = generate_permutations(self.board.cols[col], len(self.board.cols))
             nodes[(1, col)] = node

@@ -97,6 +97,7 @@ class CSPState(Node):
     def calculate_heuristic(self, *args):
         heuristic = 0
         for variable in self.variables.values():
+            print("this is variable: ", variable)
             heuristic += len(variable) - 1
         self.h = heuristic
 

@@ -12,8 +12,8 @@ class Board():
 
             self.cols = []
             self.rows = []
-            num_cols = int(self.dimensions.pop(0))
             num_rows = int(self.dimensions.pop(0))
+            num_cols = int(self.dimensions.pop(0))
 
             for _ in range(num_rows):
                 temp = content.pop(0).split()
