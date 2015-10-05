@@ -89,22 +89,18 @@ class Main():
         edges = self.board.graph.edges()
 
         nodes = {}
+        constraints = {}
 
         for node in sorted(self.board.graph.nodes()):
             id = str(node)
             var = Variable(id)
             nodes[id] = var
             var.domain = domain
-            csp.variables.append(var)
+#            csp.variables.append(var)
 
         for key in nodes.keys():
-            for ne in self.board.graph.neighbors(key):
-                c = Constraint()
-                c.function = function
-                c.variables.append(nodes[ne])
-                c.variables.append(nodes[key])
-                print('{} <-> {}'.format(nodes[ne], nodes[key]))
-                csp.constraints.append(c)
+            constraint[key] = self.board.graph.neighbors(key)
+
 
         #print("this is conts:!!! ::: : :", csp.constraints)
 
@@ -122,7 +118,13 @@ class Main():
 
         #csp.domain_filtering_loop()
 
+        constraint = Constraint()
+        constraint.function = function
+
         state = CSPState()
+        state.constraints = constraints
+        state.variables = nodes
+
 
         state.csp = csp
 
