@@ -29,7 +29,7 @@ def generate_permutations(counts, length):
             permutations.append(permutation)
             break
         sub_start = x
-        sub_rows = get_permutations(counts[1:len(counts)], length - sub_start)
+        sub_rows = generate_permutations(counts[1:len(counts)], length - sub_start)
         for sub_row in sub_rows:
             sub_permutation = copy.deepcopy(permutation)
             for x in range(sub_start, length):

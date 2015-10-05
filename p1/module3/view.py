@@ -2,7 +2,12 @@
 import os
 from module3.board import *
 from tkinter import *
-from util import make_function
+from util import make_function, generate_permutations
+from algorithm.gac import NonogramGAC
+from algorithm.astarcsp import AstarCSP
+from datastructure.nonograms import CSPState
+from datastructure.nonograms import Constraint, Variable
+
 
 SIZE = 10
 
@@ -41,12 +46,14 @@ class Main(Frame):
 
         self.optionsmenu = optionsmenu
 
+
     def createmap(self, f=None):
 
         self.current_file = f
 
         self.board = Board(f)
         self.draw_map()
+        self.run()
 
     def draw_map(self):
         self.canvas.delete('all')
@@ -81,11 +88,41 @@ class Main(Frame):
 
     def run(self):
 
+        gac = NonogramGAC()
+        nodes = {}
         function = make_function(['x, y'], 'x == y') #x[1][x[0]]
         constraints = {}
 
-        for col in self.board.cols:
-                constraints[(1, col)] = range(len(self.board.cols))
+        for row in range(len(self.board.rows)):
+            constraints[(0, row)] = [(1, x) for x in range(len(self.board.rows))]
+            node = Variable((0, row))
+            node.domain = generate_permutations(self.board.rows[row], len(self.board.rows))
+            nodes[(0, row)] = node
 
-        for row in self.board.row:
-                constraints[(0, row)] = range(len(self.board.row))
+        for col in range(len(self.board.cols)):
+            constraints[(1, col)] = [(0, x) for x in range(len(self.board.cols))]
+            node = Variable((1, col))
+            node.domain = generate_permutations(self.board.cols[col], len(self.board.cols))
+            nodes[(1, col)] = node
+
+        print("this is variables: ", nodes)
+        for y in constraints:
+            print("this is const: ", y)
+
+        constraint = Constraint()
+        constraint.function = function
+        state = CSPState()
+        state.constraints = constraints
+        state.constraint = constraint
+        state.variables = nodes
+        state.gac = gac
+        gac.state = state
+        astar_csp = AstarCSP()
+        astar_csp.csp_state = state
+        astar_csp.initialize()
+
+
+        for r in astar_csp.run():
+            if r[0]:
+                s = r[0][-1]
+                print("This is s: ", s)

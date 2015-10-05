@@ -13,9 +13,11 @@ class Board():
             self.rows = []
             for _ in range(int(self.dimensions.pop(0))):
                 temp = content.pop(0).split()
-                self.rows.append(temp)
+                print(temp)
+                self.rows.append(list(map(lambda x: int(x), temp)))
+                    #(int(temp[0]), int(temp[1])))
 
             self.cols = []
             for _ in range(int(self.dimensions.pop(0))):
                 temp = content.pop(0).split()
-                self.cols.append(temp)
+                self.cols.append(list(map(lambda x: int(x), temp)))
