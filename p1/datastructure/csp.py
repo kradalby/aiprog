@@ -20,7 +20,8 @@ class Variable(Node):
         return len(self) > len(other)
 
     def __eq__(self, other):
-        return len(self) == len(other)
+        return self.id == other.id
+        #return len(self) == len(other)
 
     def __str__(self):
         return 'VARIABLE - ID: {}, D: {}'.format(self.id, self.domain)

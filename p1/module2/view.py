@@ -103,6 +103,7 @@ class Main():
                 c.function = function
                 c.variables.append(nodes[ne])
                 c.variables.append(nodes[key])
+                print('{} <-> {}'.format(nodes[ne], nodes[key]))
                 csp.constraints.append(c)
 
         #print("this is conts:!!! ::: : :", csp.constraints)
