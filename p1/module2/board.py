@@ -1,5 +1,5 @@
 import networkx as nx
-from datastructure.csp import Variable
+from datastructure.vc import Variable
 
 
 class Board():

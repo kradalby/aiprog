@@ -68,44 +68,6 @@ class CSPState(Node):
     def __hash__(self):
         return hash(self.hash)
 
-
-    #def generate_kids(self):
-    #    for variable in sorted(self.csp.variables):
-    #        if len(variable) > 1:
-    #            for element in variable.domain:
-    #                variable_copy = None
-
-    #                #new_csp = copy.deepcopy(self.csp)
-    #                new_csp = CSP()
-    #                new_csp.constraints = self.csp.constraints
-
-    #                for n in self.csp.variables:
-    #                    new_csp.variables.append(copy.deepcopy(n))
-    #                    if n.id == variable.id:
-    #                        variable_copy = n
-    #                        n.domain = [element]
-
-    #                new_csp.rerun(variable_copy)
-
-    #                # for n in csp_copy.variables:
-    #                #     print(n)
-
-    #                if new_csp.is_valid(variable_copy):
-    #                    print('POSSIBLE')
-    #                    for n in new_csp.variables:
-    #                        print(n)
-    #                    print('HEURISTIC: ', self.h)
-    #                    state = CSPState()
-    #                    state.csp = new_csp
-    #                    state.parent = self
-
-    #                    if state.csp.is_finished():
-    #                        print('POSSIBLE - FINISHED')
-    #                        state.end = True
-
-    #                    self.kids.append(state)
-    #            break
-
     def generate_kids(self):
         for variable in sorted(self.variables.values()):
             if len(variable) > 1:

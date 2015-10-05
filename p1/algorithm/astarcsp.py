@@ -1,4 +1,4 @@
-from datastructure.csp import CSPState
+from datastructure.vc import CSPState
 from algorithm.astar import Astar
 
 class AstarCSP:
