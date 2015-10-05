@@ -34,24 +34,10 @@ class Variable(Node):
         return len(self.domain)
 
 
-class Constraint(Node):
+class Constraint():
 
     def __init__(self):
-        self.f = 0
-        self.variables = []
         self.function = None
-
-    def __str__(self):
-        return 'CONSTRAINT - VARS: {}'.format(self.variables)
-
-    def __repr__(self):
-        return 'CONSTRAINT - VARS: {}'.format(self.variables)
-
-    def __len__(self):
-        return len(self.variables)
-
-    def __eq__(self, other):
-        return self.__dict__ == other.__dict__
 
 
 class CSPState(Node):
@@ -61,7 +47,7 @@ class CSPState(Node):
         self.gac = None
 
         self.variables = {}
-        self.constraints = []
+        self.constraints = {}
         self.f = 0
         self.g = 0
         self.h = 0
@@ -70,6 +56,7 @@ class CSPState(Node):
         self.kids = []
         self.end = False
         self.hash = str(uuid.uuid1())
+        self.gac = None
 
     def __str__(self):
         return 'CSPState: end: {}, H: {}, F: {}'.format(self.end, self.h, self.f)
@@ -127,6 +114,7 @@ class CSPState(Node):
                     new_state = CSPState()
                     new_state = str(uuid.uuid1())
                     new_state.gac = self.gac
+                    new_state.gac.state = new_state
                     new_state.constraints = self.constraints
                     new_state.variables = copy.deepcopy(self.variables)
                     new_state.variables[variable.id] = [domain_element]
@@ -148,7 +136,7 @@ class CSPState(Node):
 
     def calculate_heuristic(self, *args):
         heuristic = 0
-        for variable in self.csp.variables:
+        for variable in self.variables:
             heuristic += len(variable) - 1
         self.h = heuristic
 
@@ -159,14 +147,14 @@ class CSPState(Node):
         return True
 
     def is_valid(self, node):
-        if len(node.domain) == 1:
-            for constraint in self.constraints:
-                if node in constraints.variables:
-                    var0 = constraints.variables[0]
-                    var1 = constraints.variables[0]
-                    if var0[0] == var1[0]:
-                        print('INVALID - CONSTRAINT NOT MET')
-                        return False
+        #if len(node.domain) == 1:
+        #    for constraint in self.constraints:
+        #        if node in constraints.variables:
+        #            var0 = constraints.variables[0]
+        #            var1 = constraints.variables[0]
+        #            if var0[0] == var1[0]:
+        #                print('INVALID - CONSTRAINT NOT MET')
+        #                return False
 
         for variable in self.variables:
             if len(variable) == 0:
