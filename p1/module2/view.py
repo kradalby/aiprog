@@ -123,6 +123,7 @@ class Main():
 
         state = CSPState()
         state.constraints = constraints
+        state.constraint = constraint
         state.variables = nodes
 
 
