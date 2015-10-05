@@ -62,7 +62,7 @@ class Main():
                              command=lambda fp=fullpath: self.createmap(f=fp))
 
     def draw_map(self):
-        nx.draw(self.board.graph, self.board.node_pos, ax=self.ax, node_color=['#000000' for x in range(len(self.board.graph))])
+        nx.draw(self.board.graph, self.board.node_pos, ax=self.ax, node_color=[Main.BLACK for x in range(len(self.board.graph))])
         #nx.draw_networkx_nodes(self.board.graph, self.board.node_pos, nodelist=[('0'), ('1')], node_color='b')
         self.canvas.draw()
 
@@ -72,7 +72,7 @@ class Main():
         for node_id in self.board.node_pos.keys():
             for node in state.csp.variables:
                 if node.id == node_id:
-                    color_list.append(node.domain[0] if len(node.domain) == 1 else 0)
+                    color_list.append(Main.COLORS[node.domain[0] if len(node.domain) == 1 else 0])
         print('GRAPH: ', color_list)
 
         #nx.draw(self.board.graph, self.board.node_pos, ax=self.ax, node_color=[Main.COLORS[random.randint(1,4)] for x in range(len(self.board.graph))])
@@ -133,11 +133,7 @@ class Main():
 
 
         for r in astar_csp.run():
-            #print('astar run', r)
             if r[0]:
-
-                #print(r[2])
-                #print(list(r[2]))
                 s = r[0][-1]
                 self.redraw_nodes_with_color(s)
                 #self.color_node(s.colored_node)
