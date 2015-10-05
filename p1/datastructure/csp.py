@@ -113,25 +113,25 @@ class CSPState(Node):
                     new_variable = None
 
                     new_state = CSPState()
-                    new_state = str(uuid.uuid1())
+                    new_state.hash = str(uuid.uuid1())
                     new_state.gac = self.gac
                     new_state.gac.state = new_state
                     new_state.constraints = self.constraints
+                    new_state.constraint = self.constraint
                     new_state.variables = copy.deepcopy(self.variables)
-                    new_state.variables[variable.id] = [domain_element]
+                    new_state.variables[variable.id].domain = [domain_element]
+                    new_variable = new_state.variables[variable.id]
 
                     new_state.gac.rerun(new_state.variables[variable.id])
 
-                    if new_state.is_valid():
-
-
-                        print('HEURISTIC: ', self.h)
-                        for var in new_state.variable:
-                            print(var)
+                    if new_state.is_valid(new_variable):
+                        #print('HEURISTIC: ', self.h)
+                        # for var in new_state.variables.values():
+                        #     print(var)
                         new_state.parent = self
 
                         if new_state.is_finished():
-                            print('FINISHED')
+                            #print('FINISHED')
                             new_state.end = True
 
                         self.kids.append(new_state)
@@ -139,12 +139,12 @@ class CSPState(Node):
 
     def calculate_heuristic(self, *args):
         heuristic = 0
-        for variable in self.variables:
+        for variable in self.variables.values():
             heuristic += len(variable) - 1
         self.h = heuristic
 
     def is_finished(self):
-        for variable in self.variables:
+        for variable in self.variables.values():
             if len(variable) != 1:
                 return False
         return True
@@ -159,9 +159,9 @@ class CSPState(Node):
         #                print('INVALID - CONSTRAINT NOT MET')
         #                return False
 
-        for variable in self.variables:
+        for variable in self.variables.values():
             if len(variable) == 0:
-                print('INVALID - DOMAIN IS TO LITTLE')
+                #print('INVALID - DOMAIN IS TO LITTLE')
                 return False
-        print('VALID')
+        #print('VALID')
         return True

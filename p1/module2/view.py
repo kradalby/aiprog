@@ -10,7 +10,7 @@ matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
 
-from algorithm.csp import CSP
+from algorithm.gac import GAC
 from algorithm.astarcsp import AstarCSP
 from datastructure.csp import Constraint, Variable, CSPState
 from util import make_function
@@ -70,10 +70,10 @@ class Main():
         self.ax.clear()
         color_list = []
         for node_id in self.board.node_pos.keys():
-            for node in state.csp.variables:
+            for node in state.variables.values():
                 if node.id == node_id:
                     color_list.append(Main.COLORS[node.domain[0] if len(node.domain) == 1 else 0])
-        print('GRAPH: ', color_list)
+        #print('GRAPH: ', color_list)
 
         #nx.draw(self.board.graph, self.board.node_pos, ax=self.ax, node_color=[Main.COLORS[random.randint(1,4)] for x in range(len(self.board.graph))])
         nx.draw(self.board.graph, self.board.node_pos, ax=self.ax, node_color=color_list)
@@ -84,10 +84,7 @@ class Main():
 
         domain = [1, 2, 3, 4]
         function = make_function(['x, y'], 'x != y')
-
-        csp = CSP()
-        edges = self.board.graph.edges()
-
+        gac = GAC()
         nodes = {}
         constraints = {}
 
@@ -96,27 +93,10 @@ class Main():
             var = Variable(id)
             nodes[id] = var
             var.domain = domain
-#            csp.variables.append(var)
+#            gac.variables.append(var)
 
         for key in nodes.keys():
-            constraint[key] = self.board.graph.neighbors(key)
-
-
-        #print("this is conts:!!! ::: : :", csp.constraints)
-
-
-        # edges = self.board.graph.edges()
-        # for i in range(len(edges)):
-        #     c = Constraint()
-        #     c.function = function
-        #     c.variables.append(csp.variables[int(edges[i][0])])
-        #     c.variables.append(csp.variables[int(edges[i][1])])
-        #     csp.constraints.append(c)
-
-
-        #csp.populate_queue()
-
-        #csp.domain_filtering_loop()
+            constraints[key] = self.board.graph.neighbors(key)
 
         constraint = Constraint()
         constraint.function = function
@@ -125,15 +105,11 @@ class Main():
         state.constraints = constraints
         state.constraint = constraint
         state.variables = nodes
-
-
-        state.csp = csp
-
+        state.gac = gac
+        gac.state = state
         astar_csp = AstarCSP()
-
         astar_csp.csp_state = state
         astar_csp.initialize()
-
 
         for r in astar_csp.run():
             if r[0]:

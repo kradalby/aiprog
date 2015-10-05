@@ -87,7 +87,7 @@ class Astar:
             return self.open.pop()
         else:
             node =  self.open.pop(0)
-            print("Next node is: ", node, ", H valuse is: ", node.h)
+            #print("Next node is: ", node, ", H valuse is: ", node.h)
             return node
     def append_node(self, node):
         if self.mode == "astar":

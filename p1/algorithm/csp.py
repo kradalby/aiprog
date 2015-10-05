@@ -8,11 +8,11 @@ class CSP:
     def populate_queue(self):
         for constraint in self.constraints:
             for variable in constraint.variables:
-                print('POPULATING QUEUE: VAR - {}, CONS - {}'.format(variable, constraint))
+                #print('POPULATING QUEUE: VAR - {}, CONS - {}'.format(variable, constraint))
                 self.queue.append((variable, constraint))
 
     def domain_filtering_loop(self):
-        print('QUEUELENGTH: {}'.format(len(self.queue)))
+        #print('QUEUELENGTH: {}'.format(len(self.queue)))
         while self.queue:
 
             variable, constraint = self.queue.pop(0)
@@ -61,7 +61,7 @@ class CSP:
     def is_valid(self, node):
         for variable in self.variables:
             if len(variable) == 0:
-                print('INVALID')
+                #print('INVALID')
                 return False
 
         for constraint in self.constraints:
@@ -69,43 +69,8 @@ class CSP:
                 #print("This is constrint variables: ", constraint.variables)
                 if len(constraint.variables[0]) == len(constraint.variables[1]):
                     if len(constraint.variables[0]) == 1 and len(constraint.variables[1]) == 1:
-                        print('INVALID Domain')
+                        #print('INVALID Domain')
                         return False
-        print('VALID')
+        #print('VALID')
         return True
-
-
-#if __name__ == '__main__':
-#    from util import make_function
-#    from datastructure.csp import Constraint
-#    from datastructure.csp import Variable
-#
-#    x = Variable(x)
-#    y = Variable(y)
-#    z = Variable(z)
-#
-#    x.domain = [0, 1, 2, 3]
-#    y.domain = [0, 1, 2, 3, 4, 5]
-#    z.domain = [4, 5, 6, 7]
-#
-#    c1 = Constraint()
-#    c2 = Constraint()
-#
-#    c1.function = make_function(['x', 'y'], 'x > y')
-#    c2.function = make_function(['x', 'y', 'z'], 'x + y > z')
-#
-#    csp = CSP()
-#
-#    csp.variables.append(x)
-#    csp.variables.append(y)
-#    csp.variables.append(z)
-#
-#    csp.constraints.append(c1)
-#    #csp.constraints.append(c2)
-#
-#    csp.populate_queue()
-#    print(csp.queue)
-#    csp.domain_filtering_loop()
-#
-#    print(csp.variables)
 
