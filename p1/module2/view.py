@@ -90,7 +90,7 @@ class Main():
 
         nodes = {}
 
-        for node in self.board.graph.nodes():
+        for node in sorted(self.board.graph.nodes()):
             id = str(node)
             var = Variable(id)
             nodes[id] = var

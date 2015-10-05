@@ -8,6 +8,7 @@ class CSP:
     def populate_queue(self):
         for constraint in self.constraints:
             for variable in constraint.variables:
+                print('POPULATING QUEUE: VAR - {}, CONS - {}'.format(variable, constraint))
                 self.queue.append((variable, constraint))
 
     def domain_filtering_loop(self):
