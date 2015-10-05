@@ -9,6 +9,7 @@ class GAC:
 
         for node_id, constraints in self.state.constraints.items():
             temp_node = self.state.variables[node_id]
+            print("TEMP NODE: ", temp_node)
             for constraint in constraints:
                 self.queue.append((temp_node, self.state.variables[constraint]))
         self.queue.sort(key=lambda tup: tup[0].id)
