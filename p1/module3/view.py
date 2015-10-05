@@ -105,9 +105,7 @@ class Main(Frame):
             node.domain = generate_permutations(self.board.cols[col], len(self.board.cols))
             nodes[(1, col)] = node
 
-        print("this is variables: ", nodes)
-        for y in constraints:
-            print("this is const: ", y)
+
 
         constraint = Constraint()
         constraint.function = function
