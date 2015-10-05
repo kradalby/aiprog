@@ -13,16 +13,95 @@ SIZE = 10
 
 
 class Main(Frame):
-    def __init__(self, parent):
-            Frame.__init__(self, parent, background='white')
+    '''
+    Class responsible for drawing the graphical interface, and the steps of the algorithm.
+    '''
 
-            self.parent = parent
-            self.board = None
-            self.current_file = None
-            self.canvas = None
-            self.view_level = 0
-            self.init_ui()
-            self.node_dic = {}
+
+    def __init__(self, parent):
+        '''
+        Initializes tkinter, and the guis controller.
+        '''
+        Frame.__init__(self, parent)
+        self.parent = parent
+        self.width = 600
+        self.height = 600
+        self.canvas = Canvas(self.parent, borderwidth=0, highlightthickness=0, width=self.width, height=self.height)
+        self.tiles = {}
+        self.init_ui()
+
+    def build(self):
+        '''
+        Builds a graphial representation of a given board.
+        '''
+        self.canvas.delete('all')
+        #self.board = board
+        print(dir(self.board))
+        #self.rows = self.board.number_of_columns
+        #self.columns = self.board.number_of_rows
+        self.rows = self.board.num_cols
+        self.columns = self.board.num_rows
+        if self.rows > self.columns:
+            self.square_size = (self.width / self.rows) / 1.5
+        else:
+            self.square_size = (self.height / self.columns) / 1.5
+        for row in reversed(range(self.rows)):
+            for column in range(self.columns):
+                x1 = row * self.square_size
+                y1 = column * self.square_size
+                x2 = row * self.square_size + self.square_size
+                y2 = column * self.square_size + self.square_size
+                self.tiles[(row, column)] = self.canvas.create_rectangle(x1, y1, x2, y2)
+
+        draw_start_x = (self.square_size * self.rows) + self.square_size
+        draw_start_y = (self.square_size * self.columns) + self.square_size
+        x_count = 0
+        y_count = self.square_size / 2
+        for row in self.board.rows:
+            for num in row:
+                self.canvas.create_text(draw_start_x + x_count, y_count, text=str(num))
+                x_count += 20
+            y_count += self.square_size
+            x_count = 0
+
+        x_count = self.square_size / 2
+        y_count = 0
+        for column in self.board.cols:
+            for num in column:
+                self.canvas.create_text(x_count, draw_start_y + y_count, text=str(num))
+                y_count += 20
+            y_count = 0
+            x_count += self.square_size
+
+        print(self.canvas)
+        self.canvas.pack()
+        self.run()
+
+    def draw_square(self, x, y, num):
+        '''
+        Draws a square from its x and y coordinates, with the given color.
+        '''
+        x1 = x * self.square_size
+        y1 = y * self.square_size
+        x2 = x1 + self.square_size
+        y2 = y1 + self.square_size
+        if num == 1:
+            self.canvas.create_rectangle(x1, y1, x2, y2, fill='blue')
+        else:
+            self.canvas.create_rectangle(x1, y1, x2, y2, fill='white')
+
+    def color_vertexes(self, state):
+        '''
+        Colors all of the vertexes.
+        '''
+        #for variable in variables:
+        #    if len(variable.domain) == 1 and variable.domain[0] == 0:
+        #        for index in range(len(current.domains[domain][0])):
+        #            self.draw_square(domain[1], index, current.domains[domain][0][index])
+        for variable in state.variables.values():
+            if variable.id[0] == 1:
+                print('ROOW: ',variable.domain)
+
 
     def init_ui(self):
 
@@ -38,44 +117,23 @@ class Main(Frame):
 
         self.add_boards_to_menu(boardsmenu)
 
-        self.canvas = Canvas(self, width=800, height=600)
-        self.canvas.config(bg='white')
-        self.canvas.pack(fill=BOTH, expand=1)
+        #self.canvas = Canvas(self, width=800, height=600)
+        #self.canvas.config(bg='white')
+        #self.canvas.pack(fill=BOTH, expand=1)
 
-        self.pack(fill=BOTH, expand=1)
+        #self.pack(fill=BOTH, expand=1)
 
-        self.optionsmenu = optionsmenu
+        #self.optionsmenu = optionsmenu
 
 
     def createmap(self, f=None):
 
         self.current_file = f
-
         self.board = Board(f)
-        self.draw_map()
-        self.run()
+        self.build()
+        print(self.tiles)
+        #self.run()
 
-    def draw_map(self):
-        self.canvas.delete('all')
-
-        # for y in range(len(self.board.matrix) - 1, -1, -1):
-        #     for x in range(len(self.board.matrix[y])):
-        #         coords = (
-        #             x * SIZE + 3,
-        #             (len(self.board.matrix[y]) - y) * SIZE + 3,
-        #             #y * SIZE + 3,
-        #             x * SIZE + (SIZE + 2),
-        #             (len(self.board.matrix[y]) - y) * SIZE + (SIZE + 2),
-        #             #y * SIZE + (SIZE + 2),
-        #         )
-        #         self.node_dic[(x, y)] = self.canvas.create_rectangle(*coords,
-        #                                      fill=self.color_creator(self.board.matrix[y][x]))
-
-    def color_creator(self, node):
-        if node.one:
-            return "white"
-        if node.zero:
-            return "black"
 
     def add_boards_to_menu(self, menu):
 
@@ -108,7 +166,6 @@ class Main(Frame):
             nodes[(1, col)] = node
 
 
-
         constraint = Constraint()
         constraint.function = function
         state = CSPState()
@@ -125,4 +182,5 @@ class Main(Frame):
         for r in astar_csp.run():
             if r[0]:
                 s = r[0][-1]
+                self.color_vertexes(s)
                 print("This is s: ", s)
