@@ -13,8 +13,8 @@ class GAC:
             #print("This is var keys: ", self.state.variables.keys())
             for constraint in constraints:
                 self.queue.append((temp_node, self.state.variables[constraint]))
-        self.queue.sort(key=lambda tup: tup[0].id)
-        #print("This is queue length: ", len(self.queue))
+        #self.queue.sort(key=lambda tup: tup[0].id)
+        print("This is queue length: ", len(self.queue))
         #print("This queue: ", self.queue)
 
     def domain_filtering_loop(self):
@@ -61,24 +61,21 @@ class GAC:
 class NonogramGAC(GAC):
     def revise(self, focal_variable, variable):
 
-        try:
-
-            temp_domain = []
-            #print("This is focal and variable", focal_variable, variable)
-            for x in variable.domain:
-                #print("PRINT OF x[variable.id[1]]", x)
-                z = x[variable.id[1]]
-                #print("This is x: ", x)
-                valid = False
-                for y in focal_variable.domain:
-                    q = y[focal_variable.id[1]]
-                    if self.state.constraint.function(z, q):
-                        valid = True
-                        #print("VALID: ", valid, "x = ", x, "y = ", y)
-                        break
-                #if shit goes wrong check it!!! is it x or y that needs domain update?
-                if valid:
-                    temp_domain.append(x)
-            variable.domain = temp_domain
-        except:
-            pass
+        temp_domain = []
+        #print("This is focal and variable", focal_variable, variable)
+        for x in variable.domain:
+            valid = False
+            #print("PRINT OF x[variable.id[1]]", x)
+            z = x[focal_variable.id[1]]
+            #print("This is x: ", x)
+            for y in focal_variable.domain:
+                q = y[variable.id[1]]
+                print("CHECKING: ", "z= ", z, "q = ", q)
+                if self.state.constraint.function(z, q):
+                    valid = True
+                    print("VALID: ", valid, "z= ", z, "q = ", q)
+                    break
+            #if shit goes wrong check it!!! is it x or y that needs domain update?
+            if valid:
+                temp_domain.append(x)
+        variable.domain = temp_domain

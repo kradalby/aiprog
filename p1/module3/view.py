@@ -7,6 +7,7 @@ from algorithm.gac import NonogramGAC
 from algorithm.astarcsp import AstarCSP
 from datastructure.nonograms import CSPState
 from datastructure.nonograms import Constraint, Variable
+from pprint import pprint
 
 
 SIZE = 30
@@ -133,7 +134,7 @@ class Main(Frame):
         astar_csp = AstarCSP()
         astar_csp.csp_state = state
         astar_csp.initialize()
-
+        pprint(state.constraints)
 
 
         for r in astar_csp.run():
