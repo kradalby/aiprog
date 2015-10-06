@@ -27,7 +27,7 @@ class Main(Frame):
 
     def generate_matrix(self, state):
 
-        matrix = [None for x in range(self.board.num_cols)]
+        matrix = [None for x in range(self.board.num_rows)]
         for var in state.variables.values():
             if var.id[0] == 0:
                 matrix[var.id[1]] = var.domain[0]
