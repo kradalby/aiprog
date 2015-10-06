@@ -73,7 +73,7 @@ class Main(Frame):
     def draw_map(self):
         self.canvas.delete('all')
 
-        for y in range(len(self.board.matrix) - 1, -1, -1):
+        for y in range(len(self.board.matrix)):
             for x in range(len(self.board.matrix[y])):
                 coords = (
                     x * SIZE + 3,
@@ -83,13 +83,17 @@ class Main(Frame):
                     #(len(self.board.matrix[y]) - y) * SIZE + (SIZE + 2),
                     y * SIZE + (SIZE + 2),
                 )
+                color = 'pink' if self.board.matrix[y][x] else 'white'
                 self.node_dic[(x, y)] = self.canvas.create_rectangle(*coords,
-                                             fill= "white")
+                                             fill= color)
 
     def update_map(self):
         for y in range(len(self.board.matrix)):
+            #print("this is y:", self.board.matrix[y])
             for x in range(len(self.board.matrix[y])):
                 if self.board.matrix[y][x]:
+                    #print("Render cores", y, ":", x)
+                    #self.canvas.itemconfig(self.node_dic[(x, y)], fill='white')
                     self.canvas.itemconfig(self.node_dic[(x, y)], fill='pink')
 
     def add_boards_to_menu(self, menu):
@@ -141,5 +145,6 @@ class Main(Frame):
             if r[0]:
                 s = r[0][-1]
                 self.generate_matrix(s)
-                self.update_map()
+                self.draw_map()
+                #self.update_map()
                 print("This is s: ", s)
