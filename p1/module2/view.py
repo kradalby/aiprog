@@ -130,7 +130,8 @@ class Main():
                 #self.color_node(s.colored_node)
 
                 unsatisfied = [(len(x.domain)-1) for x in gac.state.variables.values()]
+                without_assignments = [1 for x in gac.state.variables.values() if  len(x.domain) > 1]
                 print('UNSATISFIED CONSTRAINTS: {}'.format(sum(unsatisfied)))
-                print('Vertices without assignments: {}'.format(1))
+                print('Vertices without assignments: {}'.format(sum(without_assignments)))
                 print('Nodes in seachtree: {}'.format(len(r[1])))
                 print('Number of expanded: {}'.format(len(r[2])))
