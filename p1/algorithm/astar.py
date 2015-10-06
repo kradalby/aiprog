@@ -54,12 +54,11 @@ class Astar:
             yield current_path, self.open, self.closed
             self.closed.add(current_node)
 
-            print('ASTAR NODE INFO:', current_node.end)
 
             if current_node is end or current_node.end:
-                print('OPEN:)
+                print('OPEN:')
                 print(self.open)
-                print('CLOSED:)
+                print('CLOSED:')
                 print(self.closed)
                 print('OPENLENGHT: {}'.format(len(self.open)))
                 print('CLOSEDLENGHT: {}'.format(len(self.closed)))

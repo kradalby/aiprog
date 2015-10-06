@@ -25,6 +25,7 @@ class Main():
         self.parent = parent
         self.board = None
         self.current_file = None
+        self.k = 4
         self.init_ui()
 
     def init_ui(self):
@@ -82,7 +83,7 @@ class Main():
 
     def run(self):
 
-        domain = [1, 2, 3, 4]
+        domain = [x for x in range(1, self.k + 1)]
         function = make_function(['x, y'], 'x != y')
         gac = GAC()
         nodes = {}
@@ -116,3 +117,9 @@ class Main():
                 s = r[0][-1]
                 self.redraw_nodes_with_color(s)
                 #self.color_node(s.colored_node)
+
+                unsatisfied = [(len(x.domain)-1) for x in gac.state.variables.values()]
+                print('UNSATISFIED CONSTRAINTS: {}'.format(sum(unsatisfied)))
+                print('Vertices without assignments: {}'.format(1))
+                print('Nodes in seachtree: {}'.format(len(r[1])))
+                print('Number of expanded: {}'.format(len(r[2])))
