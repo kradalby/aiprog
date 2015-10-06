@@ -1,5 +1,4 @@
 from datastructure.node import Node
-from algorithm.csp import CSP
 import copy
 import uuid
 import time
