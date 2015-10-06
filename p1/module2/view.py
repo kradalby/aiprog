@@ -25,6 +25,7 @@ class Main():
         self.parent = parent
         self.board = None
         self.current_file = None
+        self.k = 4
         self.init_ui()
 
     def init_ui(self):
@@ -33,10 +34,13 @@ class Main():
         self.parent.config(menu=menubar)
 
         boardsmenu = Menu(menubar, tearoff=0)
+        kmenu = Menu(menubar, tearoff=0)
 
         menubar.add_cascade(label='Boards', menu=boardsmenu)
+        menubar.add_cascade(label='K', menu=kmenu)
 
         self.add_boards_to_menu(boardsmenu)
+        self.add_k_to_menu(kmenu)
 
         self.figure = Figure()
         self.ax = self.figure.add_subplot(111)
@@ -61,6 +65,13 @@ class Main():
             menu.add_command(label=os.path.basename(f),
                              command=lambda fp=fullpath: self.createmap(f=fp))
 
+    def set_k(self, k):
+        self.k = k
+
+    def add_k_to_menu(self, menu):
+        for k in range(1, 15+1):
+            menu.add_command(label=str(k), command=lambda x=k: self.set_k(x))
+
     def draw_map(self):
         nx.draw(self.board.graph, self.board.node_pos, ax=self.ax, node_color=[Main.BLACK for x in range(len(self.board.graph))])
         #nx.draw_networkx_nodes(self.board.graph, self.board.node_pos, nodelist=[('0'), ('1')], node_color='b')
@@ -82,7 +93,8 @@ class Main():
 
     def run(self):
 
-        domain = [1, 2, 3, 4]
+        print('K VALUE: ', self.k)
+        domain = [x for x in range(1, self.k + 1)]
         function = make_function(['x, y'], 'x != y')
         gac = GAC()
         nodes = {}
@@ -116,3 +128,9 @@ class Main():
                 s = r[0][-1]
                 self.redraw_nodes_with_color(s)
                 #self.color_node(s.colored_node)
+
+                unsatisfied = [(len(x.domain)-1) for x in gac.state.variables.values()]
+                print('UNSATISFIED CONSTRAINTS: {}'.format(sum(unsatisfied)))
+                print('Vertices without assignments: {}'.format(1))
+                print('Nodes in seachtree: {}'.format(len(r[1])))
+                print('Number of expanded: {}'.format(len(r[2])))
