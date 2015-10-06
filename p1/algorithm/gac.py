@@ -65,13 +65,13 @@ class NonogramGAC(GAC):
 
             temp_domain = []
             #print("This is focal and variable", focal_variable, variable)
-            for x in focal_variable.domain:
+            for x in variable.domain:
                 #print("PRINT OF x[variable.id[1]]", x)
-                z = x[focal_variable.id[1]]
+                z = x[variable.id[1]]
                 #print("This is x: ", x)
                 valid = False
-                for y in variable.domain:
-                    q = y[variable.id[1]]
+                for y in focal_variable.domain:
+                    q = y[focal_variable.id[1]]
                     if self.state.constraint.function(z, q):
                         valid = True
                         #print("VALID: ", valid, "x = ", x, "y = ", y)
