@@ -137,6 +137,10 @@ class Main(Frame):
         start, end = self.board.start, self.board.end
 
         for path, open, closed in astar.astar(start, end=end):
+            print('OPEN: ', open)
+            print('CLOSED: ', closed)
+            print('PATH: ', path)
+            print('PATHLENGTH: ', len(path))
             self.astar_event_handler(path, open, closed)
 
         #if self.view_level > 0:
