@@ -471,4 +471,9 @@ public class GameManager extends Group {
     public void setHostServices(HostServices hostServices){
         board.setHostServices(hostServices);
     }
+
+    public Map<Location, Tile> getGameGrid() {
+        return gameGrid;
+    }
+
 }
