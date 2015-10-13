@@ -12,6 +12,8 @@ import java.util.*;
 public class Node {
     private int[][] board;
     private Node parent;
+    private double probability;
+    private boolean turn;
     private ArrayList<Point> empty;
 
     public Node() {
@@ -67,12 +69,14 @@ public class Node {
             Node node2 = new Node();
             node2.setParent(this);
             node2.setBoard(this.getCopyOfBoard());
+            node2.setProbability(0.9);
             node2.getBoard()[t.y][t.x] = 2;
             nodes.add(node2);
 
             Node node4 = new Node();
             node4.setParent(this);
             node4.setBoard(this.getCopyOfBoard());
+            node4.setProbability(0.1);
             node4.getBoard()[t.y][t.x] = 4;
             nodes.add(node4);
         }
@@ -150,6 +154,14 @@ public class Node {
         this.board = board;
     }
 
+    public double getProbability() {
+        return probability;
+    }
+
+    public void setProbability(double probability) {
+        this.probability = probability;
+    }
+
     @Override
     public String toString() {
         String s = "";
@@ -179,5 +191,23 @@ public class Node {
             System.out.println(n);
         }
     }
+
+    public Node[] getMovePermutations() {
+        Node[] nodes = new Node[4];
+        nodes[0] = this.getDown();
+        nodes[1] = this.getLeft();
+        nodes[2] = this.getRight();
+        nodes[3] = this.getRight();
+        return nodes;
+    }
+
+    public boolean getTurn() {
+        return turn;
+    }
+
+    public void setTurn(boolean turn) {
+        this.turn = turn;
+    }
+
 }
 
