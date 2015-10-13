@@ -29,22 +29,24 @@ public class Node {
         };
     }
 
-    public Node getLeft() {
+    public Node newNode(boolean turn) {
         Node node = new Node();
         node.setParent(this);
         node.setBoard(this.getCopyOfBoard());
-        node.setTurn(true);
-        node.setDirection(Direction.LEFT);
+        node.setScore(this.score);
+        node.setTurn(turn);
+
+        return node;
+    }
+
+    public Node getLeft() {
+        Node node = this.newNode(true);
         node.moveLeft();
         return node;
     }
 
     public Node getRight() {
-        Node node = new Node();
-        node.setParent(this);
-        node.setBoard(this.getCopyOfBoard());
-        node.setTurn(true);
-        node.setDirection(Direction.RIGHT);
+        Node node = this.newNode(true);
         Util.inplaceReverse(node.getBoard());
         node.moveLeft();
         Util.inplaceReverse(node.getBoard());
@@ -52,11 +54,7 @@ public class Node {
     }
 
     public Node getUp() {
-        Node node = new Node();
-        node.setParent(this);
-        node.setBoard(this.getCopyOfBoard());
-        node.setTurn(true);
-        node.setDirection(Direction.UP);
+        Node node = this.newNode(true);
         Util.inplaceRotate(node.getBoard());
         Util.inplaceRotate(node.getBoard());
         Util.inplaceRotate(node.getBoard());
@@ -66,11 +64,7 @@ public class Node {
     }
 
     public Node getDown() {
-        Node node = new Node();
-        node.setParent(this);
-        node.setBoard(this.getCopyOfBoard());
-        node.setTurn(true);
-        node.setDirection(Direction.DOWN);
+        Node node = this.newNode(true);
         Util.inplaceRotate(node.getBoard());
         node.moveLeft();
         Util.inplaceRotate(node.getBoard());
@@ -81,21 +75,22 @@ public class Node {
     }
 
     public ArrayList<Node> getPermutations() {
+        for (int row = 0; row < this.getBoard().length; row++) {
+            for (int col = 0; col < this.getBoard()[row].length; col++) {
+                if (this.getBoard()[row][col] == 0) {
+                    this.empty.add(new Point(col, row));
+                }
+            }
+        }
         ArrayList<Node> nodes = new ArrayList<>();
         for (Point t: empty) {
-            Node node2 = new Node();
-            node2.setParent(this);
-            node2.setBoard(this.getCopyOfBoard());
+            Node node2 = this.newNode(false);
             node2.setProbability(0.9);
-            node2.setTurn(false);
             node2.getBoard()[t.y][t.x] = 2;
             nodes.add(node2);
 
-            Node node4 = new Node();
-            node4.setParent(this);
-            node4.setBoard(this.getCopyOfBoard());
+            Node node4 = this.newNode(false);
             node4.setProbability(0.1);
-            node4.setTurn(false);
             node4.getBoard()[t.y][t.x] = 4;
             nodes.add(node4);
         }
@@ -134,13 +129,6 @@ public class Node {
                     this.board[row][i+1] = 0;
                 }
             }
-
-            // Save all the empty spots
-            for (int i = 0; i < this.board[row].length; i++) {
-                if (this.board[row][i] == 0) {
-                    this.empty.add(new Point(i, row));
-                }
-            }
         }
     }
 
@@ -149,16 +137,16 @@ public class Node {
     }
 
     public int getClusteringScore(){
-        return 0;
+        return 1;
     }
 
-    private int heuristicScore() {
+    public double heuristicScore() {
 
         int actualScore = this.getScore();
         int numberOfEmptyCells = this.getNumberOfEmptyCells();
         int clusteringScore = this.getClusteringScore();
-        int score = (int) (actualScore+Math.log(actualScore)*numberOfEmptyCells -clusteringScore);
-        return Math.max(score, Math.min(actualScore, 1));
+        int score = (int) (actualScore + Math.log(actualScore) * numberOfEmptyCells - clusteringScore);
+        return (double) Math.max(score, Math.min(actualScore, 1));
     }
 
     public void populateBoard(Map<Location, Tile> grid) {
@@ -207,36 +195,6 @@ public class Node {
         this.probability = probability;
     }
 
-    @Override
-    public String toString() {
-        String s = "";
-        for (int row = 0; row < this.board.length; row++) {
-            for (int i = 0; i < this.board[row].length; i++) {
-                s += this.board[row][i];
-                s += " ";
-            }
-            s += "\n";
-        }
-        return s;
-    }
-
-    public static void main(String[] args) {
-        Node node = new Node();
-        node.setBoard(new int [][] {
-                {2,2,0,2},
-                {2,4,2,2},
-                {0,2,2,4},
-                {0,0,4,2}
-        });
-        node = node.getDown();
-        System.out.println("stuff");
-        ArrayList<Node> nodes = node.getPermutations();
-        System.out.println("derp");
-        for (Node n : nodes) {
-            System.out.println(n);
-        }
-    }
-
     public Node[] getMovePermutations() {
         Node[] nodes = new Node[4];
         nodes[0] = this.getDown();
@@ -269,6 +227,36 @@ public class Node {
 
     public void setScore(int score) {
         this.score = score;
+    }
+
+    @Override
+    public String toString() {
+        String s = "";
+        for (int row = 0; row < this.board.length; row++) {
+            for (int i = 0; i < this.board[row].length; i++) {
+                s += this.board[row][i];
+                s += " ";
+            }
+            s += "\n";
+        }
+        return s;
+    }
+
+    public static void main(String[] args) {
+        Node node = new Node();
+        node.setBoard(new int [][] {
+                {2,2,8,2},
+                {1,4,1,1},
+                {8,2,2,4},
+                {0,0,0,0}
+        });
+        node = node.getDown();
+        System.out.println("stuff");
+        ArrayList<Node> nodes = node.getPermutations();
+        System.out.println("derp");
+        for (Node n : nodes) {
+            System.out.println(n);
+        }
     }
 }
 

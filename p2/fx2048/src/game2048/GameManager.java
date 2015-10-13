@@ -46,8 +46,6 @@ public class GameManager extends Group {
     private final List<Location> locations = new ArrayList<>();
     private final Map<Location, Tile> gameGrid;
     private final Set<Tile> mergedToBeRemoved = new HashSet<>();
-    private Expectiminimax ex;
-
     private final Board board;
     private final GridOperator gridOperator;
 
@@ -66,8 +64,7 @@ public class GameManager extends Group {
      */
     public GameManager(int gridSize) {
         this.gameGrid = new HashMap<>();
-        this.ex = new Expectiminimax();
-        
+
         gridOperator=new GridOperator(gridSize);
         board = new Board(gridOperator);
         this.getChildren().add(board);
@@ -230,9 +227,6 @@ public class GameManager extends Group {
 
             parallelTransition.play();
         }
-
-        Direction dir = this.ex.getNextMove(this.getGameGrid(), this.board.getPoints());
-        this.move(dir);
 
     }
 
@@ -483,5 +477,10 @@ public class GameManager extends Group {
     public Map<Location, Tile> getGameGrid() {
         return gameGrid;
     }
+
+    public Board getBoard() {
+        return board;
+    }
+
 
 }

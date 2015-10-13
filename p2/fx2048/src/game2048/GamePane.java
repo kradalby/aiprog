@@ -1,5 +1,8 @@
 package game2048;
 
+import expectimax2048.Expectiminimax;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -13,6 +16,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
+import javafx.util.Duration;
 
 /**
  * @author bruno.borges@oracle.com
@@ -21,6 +25,7 @@ public class GamePane extends StackPane {
 
     private GameManager gameManager;
     private Bounds gameBounds;
+    private Expectiminimax ex;
     private final static int MARGIN = 36;
 
     static {
@@ -33,6 +38,7 @@ public class GamePane extends StackPane {
         gameManager = new GameManager();
         gameManager.setToolBar(createToolBar());
         gameBounds = gameManager.getLayoutBounds();
+        ex = new Expectiminimax();
 
         getChildren().add(gameManager);
 
@@ -74,6 +80,18 @@ public class GamePane extends StackPane {
             if (keyCode.isArrowKey()) {
                 Direction direction = Direction.valueFor(keyCode);
                 move(direction);
+            }
+            if (keyCode.isWhitespaceKey()) {
+                Timeline timeOut = new Timeline(new KeyFrame(Duration.seconds(0.6), new EventHandler<ActionEvent>() {
+
+                    @Override
+                    public void handle(ActionEvent event) {
+                        Direction dir = ex.getNextMove(gameManager.getGameGrid(), gameManager.getBoard().getGameScoreProperty());
+                        move(dir);
+                    }
+                }));
+                timeOut.setCycleCount(Timeline.INDEFINITE);
+                timeOut.play();
             }
         });
     }

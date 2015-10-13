@@ -47,7 +47,6 @@ public class Board extends Group {
     private static final int TOP_HEIGHT = 92;
     private static final int GAP_HEIGHT = 50;
     private static final int TOOLBAR_HEIGHT = 80;
-
     private final IntegerProperty gameScoreProperty = new SimpleIntegerProperty(0);
     private final IntegerProperty gameBestProperty = new SimpleIntegerProperty(0);
     private final IntegerProperty gameMovePoints = new SimpleIntegerProperty(0);
@@ -680,5 +679,8 @@ public class Board extends Group {
         RecordManager recordManager = new RecordManager(gridOperator.getGridSize());
         gameBestProperty.set(recordManager.restoreRecord());
     }
-    
+
+    public int getGameScoreProperty() {
+        return gameScoreProperty.get();
+    }
 }

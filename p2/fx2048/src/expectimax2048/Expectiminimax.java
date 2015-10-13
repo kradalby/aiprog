@@ -4,10 +4,10 @@ import game2048.Direction;
 import game2048.Location;
 import game2048.Tile;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * Created by kradalby on 12/10/15.
@@ -22,7 +22,7 @@ public class Expectiminimax {
         double alpha = 0;
         if (depth == 0) {
             //System.out.println("Reached depth 0");
-            return 0.5;
+            return node.heuristicScore();
         }
 
 //        if () {
@@ -33,14 +33,13 @@ public class Expectiminimax {
 //        }
         if (node.getTurn()) {
             alpha = -999999999;
-            for (Node child: node.getMovePermutations()) {
+            for (Node child : node.getMovePermutations()) {
                 alpha = Math.max(alpha, expectiminimax(child, depth - 1));
             }
-        }
-        else if (!node.getTurn()) {
+        } else if (!node.getTurn()) {
             alpha = 0;
-            for (Node child: node.getPermutations()) {
-                alpha = alpha + (node.getProbability() * expectiminimax(child, depth -1));
+            for (Node child : node.getPermutations()) {
+                alpha = alpha + (node.getProbability() * expectiminimax(child, depth - 1));
             }
         }
         return alpha;
@@ -50,17 +49,30 @@ public class Expectiminimax {
     public Direction getNextMove(Map<Location, Tile> current, int score) {
         System.out.println("Getting next move");
         Map<Double, Direction> scores = new HashMap<>();
-        int depth = 6;
+        int depth = 8;
         Node node = new Node();
         node.setScore(score);
         node.populateBoard(current);
 
         System.out.println(new PrettyPrintingMap<Double, Direction>(scores));
 
-        scores.put(this.expectiminimax(node.getUp(), depth), Direction.UP);
-        scores.put(this.expectiminimax(node.getRight(), depth), Direction.RIGHT);
-        scores.put(this.expectiminimax(node.getDown(), depth), Direction.DOWN);
-        scores.put(this.expectiminimax(node.getLeft(), depth), Direction.LEFT);
+        Node up = node.getUp();
+        Node right = node.getRight();
+        Node down = node.getDown();
+        Node left = node.getLeft();
+
+        if (!Arrays.deepEquals(node.getBoard(), up.getBoard())) {
+            scores.put(this.expectiminimax(node.getUp(), depth), Direction.UP);
+        }
+        if (!Arrays.deepEquals(node.getBoard(), right.getBoard())) {
+            scores.put(this.expectiminimax(node.getRight(), depth), Direction.RIGHT);
+        }
+        if (!Arrays.deepEquals(node.getBoard(), down.getBoard())) {
+            scores.put(this.expectiminimax(node.getDown(), depth), Direction.DOWN);
+        }
+        if (!Arrays.deepEquals(node.getBoard(), left.getBoard())) {
+            scores.put(this.expectiminimax(node.getLeft(), depth), Direction.LEFT);
+        }
 
         System.out.println(new PrettyPrintingMap<Double, Direction>(scores));
 
