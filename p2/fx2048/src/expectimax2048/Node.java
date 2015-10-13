@@ -121,6 +121,27 @@ public class Node {
         }
     }
 
+    public int getActualScore(){
+        return 0;
+    }
+
+    public  int getNumberOfEmptyCells(){
+        return this.empty.size();
+    }
+
+    public int getClusteringScore(){
+        return 0;
+    }
+
+    private int heuristicScore() {
+
+        int actualScore = this.getActualScore();
+        int numberOfEmptyCells = this.getNumberOfEmptyCells();
+        int clusteringScore = this.getClusteringScore();
+        int score = (int) (actualScore+Math.log(actualScore)*numberOfEmptyCells -clusteringScore);
+        return Math.max(score, Math.min(actualScore, 1));
+    }
+
     public void populateBoard(Map<Location, Tile> grid) {
         System.out.println(new PrettyPrintingMap<Location, Tile>(grid));
     }
