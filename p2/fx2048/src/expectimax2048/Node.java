@@ -21,6 +21,12 @@ public class Node {
 
     public Node() {
         empty = new ArrayList<>();
+        board = new int [][] {
+                {0,0,0,0},
+                {0,0,0,0},
+                {0,0,0,0},
+                {0,0,0,0}
+        };
     }
 
     public Node getLeft() {
@@ -140,6 +146,15 @@ public class Node {
 
     public void populateBoard(Map<Location, Tile> grid) {
         System.out.println(new PrettyPrintingMap<Location, Tile>(grid));
+
+        for (Location loc : grid.keySet()) {
+            Tile t = grid.get(loc);
+            if (t != null) {
+                this.board[loc.getY()][loc.getX()] = t.getValue().intValue();
+            }
+        }
+
+        System.out.println(this);
     }
 
     private int[][] getCopyOfBoard() {
