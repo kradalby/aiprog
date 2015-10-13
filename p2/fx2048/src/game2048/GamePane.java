@@ -4,6 +4,7 @@ import expectimax2048.Expectiminimax;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.value.ChangeListener;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
@@ -82,18 +83,52 @@ public class GamePane extends StackPane {
                 move(direction);
             }
             if (keyCode.isWhitespaceKey()) {
-                Timeline timeOut = new Timeline(new KeyFrame(Duration.seconds(0.6), new EventHandler<ActionEvent>() {
+                //Timeline timeOut = new Timeline(new KeyFrame(Duration.seconds(0.6), new EventHandler<ActionEvent>() {
+                //    @Override
+                //    public void handle(ActionEvent event) {
+                //        Direction dir = ex.getNextMove(gameManager.getGameGrid(), gameManager.getBoard().getGameScoreProperty());
+                //        move(dir);
+                //    }
+                //}));
+                //timeOut.setCycleCount(Timeline.INDEFINITE);
+                //timeOut.play();
+                // while (true) {
+                //     try {
+                //         Direction dir = ex.getNextMove(gameManager.getGameGrid(), gameManager.getBoard().getGameScoreProperty());
+                //         move(dir);
+                //         Thread.sleep(700);
+                //     } catch (InterruptedException e) {
+                //         e.printStackTrace();
+                //     }
+                // }
+                expectiminimaxHandler();
 
-                    @Override
-                    public void handle(ActionEvent event) {
-                        Direction dir = ex.getNextMove(gameManager.getGameGrid(), gameManager.getBoard().getGameScoreProperty());
-                        move(dir);
-                    }
-                }));
-                timeOut.setCycleCount(Timeline.INDEFINITE);
-                timeOut.play();
             }
         });
+    }
+
+    private void expectiminimaxHandler() {
+
+        Task task = new Task<Void>(){
+
+            @Override
+            protected Void call() throws Exception {
+                try {
+                    //busy waiting
+                    while (gameManager.isMovingTiles());
+                    //Thread.sleep(20);
+                } catch(Exception e){
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        };
+        task.setOnSucceeded(event -> {
+            Direction dir = ex.getNextMoveThreaded(gameManager.getGameGrid(), gameManager.getBoard().getGameScoreProperty());
+            move(dir);
+            expectiminimaxHandler();
+        });
+        new Thread(task).start();
     }
 
     private void addSwipeHandlers(Node node) {

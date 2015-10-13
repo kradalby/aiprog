@@ -132,34 +132,67 @@ public class Node {
         }
     }
 
-    public  int getNumberOfEmptyCells(){
+    public int getNumberOfEmptyCells(){
         return this.empty.size();
     }
 
-    public int getClusteringScore(){
-        return 1;
+    private  int calculateClusteringScore() {
+        int clusteringScore=0;
+        int [][] boardArray = this.board;
+
+        int[] neighbors = {-1,0,1};
+
+        for(int i=0;i<boardArray.length;++i) {
+            for(int j=0;j<boardArray.length;++j) {
+                if(boardArray[i][j]==0) {
+                    continue;
+                }
+
+                int numOfNeighbors=0;
+                int sum=0;
+                for(int k : neighbors) {
+                    int x=i+k;
+                    if(x<0 || x>=boardArray.length) {
+                        continue;
+                    }
+                    for(int l : neighbors) {
+                        int y = j+l;
+                        if(y<0 || y>=boardArray.length) {
+                            continue;
+                        }
+
+                        if(boardArray[x][y]>0) {
+                            ++numOfNeighbors;
+                            sum+=Math.abs(boardArray[i][j]-boardArray[x][y]);
+                        }
+
+                    }
+                }
+
+                clusteringScore+=sum/numOfNeighbors;
+            }
+        }
+
+        //return 0;
+        return clusteringScore;
     }
 
     public double heuristicScore() {
 
         int actualScore = this.getScore();
         int numberOfEmptyCells = this.getNumberOfEmptyCells();
-        int clusteringScore = this.getClusteringScore();
-        int score = (int) (actualScore + Math.log(actualScore) * numberOfEmptyCells - clusteringScore);
-        return (double) Math.max(score, Math.min(actualScore, 1));
+        int clusteringScore = this.calculateClusteringScore();
+        int score = (int) (actualScore+Math.log(actualScore)*numberOfEmptyCells -clusteringScore);
+        return Math.max(score, Math.min(actualScore, 1));
     }
 
     public void populateBoard(Map<Location, Tile> grid) {
-        System.out.println(new PrettyPrintingMap<Location, Tile>(grid));
-
         for (Location loc : grid.keySet()) {
             Tile t = grid.get(loc);
             if (t != null) {
                 this.board[loc.getY()][loc.getX()] = t.getValue().intValue();
             }
         }
-
-        System.out.println(this);
     }
 
     private int[][] getCopyOfBoard() {
@@ -197,10 +230,10 @@ public class Node {
 
     public Node[] getMovePermutations() {
         Node[] nodes = new Node[4];
-        nodes[0] = this.getDown();
-        nodes[1] = this.getLeft();
-        nodes[2] = this.getRight();
-        nodes[3] = this.getRight();
+        nodes[0] = this.getUp();
+        nodes[1] = this.getRight();
+        nodes[2] = this.getDown();
+        nodes[3] = this.getLeft();
         return nodes;
     }
 

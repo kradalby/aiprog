@@ -41,7 +41,6 @@ public class GameManager extends Group {
     private static final Duration ANIMATION_EXISTING_TILE = Duration.millis(65);
     private static final Duration ANIMATION_NEWLY_ADDED_TILE = Duration.millis(125);
     private static final Duration ANIMATION_MERGED_TILE = Duration.millis(80);
-    
     private volatile boolean movingTiles = false;
     private final List<Location> locations = new ArrayList<>();
     private final Map<Location, Tile> gameGrid;
@@ -480,6 +479,10 @@ public class GameManager extends Group {
 
     public Board getBoard() {
         return board;
+    }
+
+    public boolean isMovingTiles() {
+        return movingTiles;
     }
 
 
