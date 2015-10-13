@@ -148,15 +148,52 @@ public class Node {
         return this.empty.size();
     }
 
-    public int getClusteringScore(){
-        return 0;
+
+    private  int calculateClusteringScore() {
+        int clusteringScore=0;
+        int [][] boardArray = this.board;
+
+        int[] neighbors = {-1,0,1};
+
+        for(int i=0;i<boardArray.length;++i) {
+            for(int j=0;j<boardArray.length;++j) {
+                if(boardArray[i][j]==0) {
+                    continue;
+                }
+
+                int numOfNeighbors=0;
+                int sum=0;
+                for(int k : neighbors) {
+                    int x=i+k;
+                    if(x<0 || x>=boardArray.length) {
+                        continue;
+                    }
+                    for(int l : neighbors) {
+                        int y = j+l;
+                        if(y<0 || y>=boardArray.length) {
+                            continue;
+                        }
+
+                        if(boardArray[x][y]>0) {
+                            ++numOfNeighbors;
+                            sum+=Math.abs(boardArray[i][j]-boardArray[x][y]);
+                        }
+
+                    }
+                }
+
+                clusteringScore+=sum/numOfNeighbors;
+            }
+        }
+
+        return clusteringScore;
     }
 
     private int heuristicScore() {
 
         int actualScore = this.getScore();
         int numberOfEmptyCells = this.getNumberOfEmptyCells();
-        int clusteringScore = this.getClusteringScore();
+        int clusteringScore = this.calculateClusteringScore();
         int score = (int) (actualScore+Math.log(actualScore)*numberOfEmptyCells -clusteringScore);
         return Math.max(score, Math.min(actualScore, 1));
     }
