@@ -15,6 +15,8 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import expectimax2048.Expectiminimax;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -44,6 +46,7 @@ public class GameManager extends Group {
     private final List<Location> locations = new ArrayList<>();
     private final Map<Location, Tile> gameGrid;
     private final Set<Tile> mergedToBeRemoved = new HashSet<>();
+    private Expectiminimax ex;
 
     private final Board board;
     private final GridOperator gridOperator;
@@ -63,6 +66,7 @@ public class GameManager extends Group {
      */
     public GameManager(int gridSize) {
         this.gameGrid = new HashMap<>();
+        this.ex = new Expectiminimax();
         
         gridOperator=new GridOperator(gridSize);
         board = new Board(gridOperator);
@@ -226,6 +230,10 @@ public class GameManager extends Group {
 
             parallelTransition.play();
         }
+
+        Direction dir = this.ex.getNextMove(this.getGameGrid(), this.board.getPoints());
+        this.move(dir);
+
     }
 
     /**
