@@ -138,10 +138,6 @@ public class Node {
         }
     }
 
-    public int getActualScore(){
-        return 0;
-    }
-
     public  int getNumberOfEmptyCells(){
         return this.empty.size();
     }
@@ -152,7 +148,7 @@ public class Node {
 
     private int heuristicScore() {
 
-        int actualScore = this.getActualScore();
+        int actualScore = this.getScore();
         int numberOfEmptyCells = this.getNumberOfEmptyCells();
         int clusteringScore = this.getClusteringScore();
         int score = (int) (actualScore+Math.log(actualScore)*numberOfEmptyCells -clusteringScore);
