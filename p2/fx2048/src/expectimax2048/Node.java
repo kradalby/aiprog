@@ -1,5 +1,6 @@
 package expectimax2048;
 
+import game2048.Direction;
 import game2048.Location;
 import game2048.Tile;
 
@@ -14,6 +15,8 @@ public class Node {
     private Node parent;
     private double probability;
     private boolean turn;
+    private int score;
+    private Direction direction;
     private ArrayList<Point> empty;
 
     public Node() {
@@ -24,6 +27,8 @@ public class Node {
         Node node = new Node();
         node.setParent(this);
         node.setBoard(this.getCopyOfBoard());
+        node.setTurn(true);
+        node.setDirection(Direction.LEFT);
         node.moveLeft();
         return node;
     }
@@ -32,6 +37,8 @@ public class Node {
         Node node = new Node();
         node.setParent(this);
         node.setBoard(this.getCopyOfBoard());
+        node.setTurn(true);
+        node.setDirection(Direction.RIGHT);
         Util.inplaceReverse(node.getBoard());
         node.moveLeft();
         Util.inplaceReverse(node.getBoard());
@@ -42,6 +49,8 @@ public class Node {
         Node node = new Node();
         node.setParent(this);
         node.setBoard(this.getCopyOfBoard());
+        node.setTurn(true);
+        node.setDirection(Direction.UP);
         Util.inplaceRotate(node.getBoard());
         Util.inplaceRotate(node.getBoard());
         Util.inplaceRotate(node.getBoard());
@@ -54,6 +63,8 @@ public class Node {
         Node node = new Node();
         node.setParent(this);
         node.setBoard(this.getCopyOfBoard());
+        node.setTurn(true);
+        node.setDirection(Direction.DOWN);
         Util.inplaceRotate(node.getBoard());
         node.moveLeft();
         Util.inplaceRotate(node.getBoard());
@@ -70,6 +81,7 @@ public class Node {
             node2.setParent(this);
             node2.setBoard(this.getCopyOfBoard());
             node2.setProbability(0.9);
+            node2.setTurn(false);
             node2.getBoard()[t.y][t.x] = 2;
             nodes.add(node2);
 
@@ -77,6 +89,7 @@ public class Node {
             node4.setParent(this);
             node4.setBoard(this.getCopyOfBoard());
             node4.setProbability(0.1);
+            node4.setTurn(false);
             node4.getBoard()[t.y][t.x] = 4;
             nodes.add(node4);
         }
@@ -209,5 +222,21 @@ public class Node {
         this.turn = turn;
     }
 
+    public Direction getDirection() {
+        return direction;
+    }
+
+    public void setDirection(Direction direction) {
+        this.direction = direction;
+    }
+
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
 }
 

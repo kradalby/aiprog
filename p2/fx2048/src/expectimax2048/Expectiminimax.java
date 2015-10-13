@@ -1,5 +1,11 @@
 package expectimax2048;
 
+import game2048.Direction;
+import game2048.Location;
+import game2048.Tile;
+
+import java.util.Map;
+
 /**
  * Created by kradalby on 12/10/15.
  */
@@ -33,6 +39,14 @@ public class Expectiminimax {
             }
         }
         return alpha;
+
+    }
+
+    public Direction getNextMove(Map<Location, Tile> current, int score) {
+        Node node = new Node();
+        node.setScore(score);
+        node.populateBoard(current);
+
 
     }
 
