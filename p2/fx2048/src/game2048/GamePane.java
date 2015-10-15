@@ -124,7 +124,7 @@ public class GamePane extends StackPane {
             }
         };
         task.setOnSucceeded(event -> {
-            Direction dir = ex.getNextMove(gameManager.getGameGrid(), gameManager.getBoard().getGameScoreProperty());
+            Direction dir = ex.getNextMoveThreaded(gameManager.getGameGrid(), gameManager.getBoard().getGameScoreProperty());
             move(dir);
             expectiminimaxHandler();
         });
