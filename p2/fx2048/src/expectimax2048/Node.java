@@ -7,6 +7,7 @@ import game2048.Tile;
 import java.awt.*;
 import java.util.*;
 
+
 /**
  * Created by kradalby on 12/10/15.
  */
@@ -177,12 +178,57 @@ public class Node {
         return clusteringScore;
     }
 
-    public double heuristicScore() {
+    public double heuristicScore(){
+
+        double score = 0;
+        float sum = 0;
+        int empty = 0;
+        int merges = 0;
+
+        int prev = 0;
+        int counter = 0;
+
+        for (int row = 0; row < this.getBoard().length; row++) {
+            for (int col = 0; col < this.getBoard()[row].length; col++) {
+                int rank = this.getBoard()[row][col];
+                if (rank >= 2) {
+                    // the score is the total sum of the tile and all intermediate merged tiles
+                    score += (rank - 1) * (1 << rank);
+                }
+            }
+
+            // Heuristic score
+
+            for (int col = 0; col < this.getBoard()[row].length; col++) {
+                int rank = this.getBoard()[row][col];
+                sum += Math.pow(rank, 2);
+                if (rank == 0) {
+                    empty++;
+                } else {
+                    if (prev == rank) {
+                        counter++;
+                    } else if (counter > 0) {
+                        merges += 1 + counter;
+                        counter = 0;
+                    }
+                    prev = rank;
+                }
+            }
+            if (counter > 0) {
+                merges += 1 + counter;
+            }
+
+        }
+
+        return (counter + empty + merges + score);
+    }
+
+    public double heuristicScore_WWW() {
 
         int actualScore = this.getScore();
         int numberOfEmptyCells = this.getNumberOfEmptyCells();
         int clusteringScore = this.calculateClusteringScore();
-        int score = (int) (actualScore+Math.log(actualScore)*numberOfEmptyCells -clusteringScore);
+        int score = (int)(Math.log(numberOfEmptyCells)*Math.pow(numberOfEmptyCells, 2) -clusteringScore);
         return Math.max(score, Math.min(actualScore, 1));
     }
 
