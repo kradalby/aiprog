@@ -86,16 +86,16 @@ public class Expectiminimax {
         System.out.println(new PrettyPrintingMap<Double, Direction>(scores));
 
         Node up = node.getUp();
-        Node right = node.getRight();
+        //Node right = node.getRight();
         Node down = node.getDown();
         Node left = node.getLeft();
 
         if (!Arrays.deepEquals(node.getBoard(), up.getBoard())) {
             scores.put(this.expectiminimax(node.getUp(), depth), Direction.UP);
         }
-        if (!Arrays.deepEquals(node.getBoard(), right.getBoard())) {
-            scores.put(this.expectiminimax(node.getRight(), depth), Direction.RIGHT);
-        }
+        // if (!Arrays.deepEquals(node.getBoard(), right.getBoard())) {
+        //     scores.put(this.expectiminimax(node.getRight(), depth), Direction.RIGHT);
+        // }
         if (!Arrays.deepEquals(node.getBoard(), down.getBoard())) {
             scores.put(this.expectiminimax(node.getDown(), depth), Direction.DOWN);
         }
@@ -142,10 +142,10 @@ public class Expectiminimax {
             Runnable workerUp = new WorkerThread("UP", up, Direction.UP, depth, scores);
             executor.execute(workerUp);
         }
-        if (!Arrays.deepEquals(node.getBoard(), right.getBoard())) {
-            Runnable workerRight = new WorkerThread("RIGHT", right, Direction.RIGHT, depth, scores);
-            executor.execute(workerRight);
-        }
+        // if (!Arrays.deepEquals(node.getBoard(), right.getBoard())) {
+        //     Runnable workerRight = new WorkerThread("RIGHT", right, Direction.RIGHT, depth, scores);
+        //     executor.execute(workerRight);
+        // }
         if (!Arrays.deepEquals(node.getBoard(), down.getBoard())) {
             Runnable workerDown = new WorkerThread("DOWN", down, Direction.DOWN, depth, scores);
             executor.execute(workerDown);

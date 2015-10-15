@@ -229,11 +229,11 @@ public class Node {
     }
 
     public Node[] getMovePermutations() {
-        Node[] nodes = new Node[4];
+        Node[] nodes = new Node[3];
         nodes[0] = this.getUp();
-        nodes[1] = this.getRight();
-        nodes[2] = this.getDown();
-        nodes[3] = this.getLeft();
+        nodes[1] = this.getDown();
+        nodes[2] = this.getLeft();
+        //nodes[1] = this.getRight();
         return nodes;
     }
 
