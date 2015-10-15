@@ -61,41 +61,51 @@ public class Expectiminimax {
 
     }
 
+    public int getDynamicDepth(Node node, int baseDepth) {
+        int depth = baseDepth;
+
+        if (node.getNumberOfEmptyCells() != 0) {
+            if (node.getNumberOfEmptyCells() < 3) {
+                depth = baseDepth + 2;
+                System.out.println("Changed depth to " + depth);
+            } else if (node.getNumberOfEmptyCells() < 6) {
+                depth = baseDepth + 1;
+                System.out.println("Changed depth to " + depth);
+            } else {
+                depth = baseDepth;
+                System.out.println("Changed depth to " + depth);
+            }
+        }
+
+        return depth;
+
+    }
+
     public Direction getNextMove(Map<Location, Tile> current, int score) {
         System.out.println("Getting next move");
         Map<Double, Direction> scores = new HashMap<>();
-        int depth = 5;
+        int baseDepth = 3;
+        int depth = baseDepth;
         Node node = new Node();
         node.setScore(score);
         node.populateBoard(current);
         node.getPermutations();
 
-        if (node.getNumberOfEmptyCells() != 0) {
-            if (node.getNumberOfEmptyCells() < 3) {
-                System.out.println("Changed depth to " + 8);
-                depth = 8;
-            } else if (node.getNumberOfEmptyCells() < 6) {
-                System.out.println("Changed depth to " + 7);
-                depth = 7;
-            } else {
-                System.out.println("Changed depth to " + 6);
-                depth = 6;
-            }
-        }
+        depth = getDynamicDepth(node, baseDepth);
 
         System.out.println(new PrettyPrintingMap<Double, Direction>(scores));
 
         Node up = node.getUp();
-        Node right = node.getRight();
+        //Node right = node.getRight();
         Node down = node.getDown();
         Node left = node.getLeft();
 
         if (!Arrays.deepEquals(node.getBoard(), up.getBoard())) {
             scores.put(this.expectiminimax(node.getUp(), depth), Direction.UP);
         }
-        if (!Arrays.deepEquals(node.getBoard(), right.getBoard())) {
-            scores.put(this.expectiminimax(node.getRight(), depth), Direction.RIGHT);
-        }
+        // if (!Arrays.deepEquals(node.getBoard(), right.getBoard())) {
+        //     scores.put(this.expectiminimax(node.getRight(), depth), Direction.RIGHT);
+        // }
         if (!Arrays.deepEquals(node.getBoard(), down.getBoard())) {
             scores.put(this.expectiminimax(node.getDown(), depth), Direction.DOWN);
         }
@@ -111,29 +121,19 @@ public class Expectiminimax {
     public Direction getNextMoveThreaded(Map<Location, Tile> current, int score) {
         System.out.println("Getting next threaded move");
         Map<Double, Direction> scores = new HashMap<>();
-        int depth = 6;
+        int baseDepth = 3;
+        int depth = baseDepth;
         Node node = new Node();
         node.setScore(score);
         node.populateBoard(current);
         node.getPermutations();
 
-        if (node.getNumberOfEmptyCells() != 0) {
-            if (node.getNumberOfEmptyCells() < 3) {
-                System.out.println("Changed depth to " + 8);
-                depth = 8;
-            } else if (node.getNumberOfEmptyCells() < 6) {
-                System.out.println("Changed depth to " + 7);
-                depth = 7;
-            } else {
-                System.out.println("Changed depth to " + 6);
-                depth = 6;
-            }
-        }
+        depth = getDynamicDepth(node, baseDepth);
 
         //System.out.println(new PrettyPrintingMap<Double, Direction>(scores));
 
         Node up = node.getUp();
-        Node right = node.getRight();
+        //Node right = node.getRight();
         Node down = node.getDown();
         Node left = node.getLeft();
 
@@ -142,10 +142,10 @@ public class Expectiminimax {
             Runnable workerUp = new WorkerThread("UP", up, Direction.UP, depth, scores);
             executor.execute(workerUp);
         }
-        if (!Arrays.deepEquals(node.getBoard(), right.getBoard())) {
-            Runnable workerRight = new WorkerThread("RIGHT", right, Direction.RIGHT, depth, scores);
-            executor.execute(workerRight);
-        }
+        // if (!Arrays.deepEquals(node.getBoard(), right.getBoard())) {
+        //     Runnable workerRight = new WorkerThread("RIGHT", right, Direction.RIGHT, depth, scores);
+        //     executor.execute(workerRight);
+        // }
         if (!Arrays.deepEquals(node.getBoard(), down.getBoard())) {
             Runnable workerDown = new WorkerThread("DOWN", down, Direction.DOWN, depth, scores);
             executor.execute(workerDown);

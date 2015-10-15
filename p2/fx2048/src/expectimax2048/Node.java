@@ -20,6 +20,33 @@ public class Node {
     private Direction direction;
     private ArrayList<Point> empty;
 
+    private static int[][] gradiantLeft = new int[][] {
+            {7,6,5,3},
+            {6,5,3,1},
+            {5,3,1,1},
+            {3,1,1,1}
+    };
+
+    private static int[][] gradiantRight = new int[][] {
+            {4,5,6,7},
+            {1,3,5,6},
+            {1,1,3,5},
+            {1,1,1,3}
+    };
+    //private static int[][] weightMatrix = new int[][] {
+    //        {7,6,5,4},
+    //        {6,5,4,3},
+    //        {5,4,3,2},
+    //        {4,3,2,1}
+    //};
+
+    //private static int[][] weightMatrix = new int[][] {
+    //        {15,14,13,12},
+    //        {8,9,10,11},
+    //        {7,6,5,4},
+    //        {0,1,2,3}
+    //};
+
     public Node() {
         empty = new ArrayList<>();
         board = new int [][] {
@@ -178,7 +205,8 @@ public class Node {
         return clusteringScore;
     }
 
-    public double heuristicScore(){
+
+    public double heuristicScore() {
 
         double score = 0;
         float sum = 0;
@@ -218,19 +246,57 @@ public class Node {
                 float monotonicity_left = 0;
                 float monotonicity_right = 0;
                 for (col = 0; col < this.getBoard()[row].length; col++) {
-                    if (this.getBoard()[row-1][col] > this.getBoard()[row][col]) {
+                    if (this.getBoard()[row - 1][col] > this.getBoard()[row][col]) {
                         monotonicity_left += Math.pow(this.getBoard()[row - 1][col], 4.0) - Math.pow(this.getBoard()[row][col], 4.0);
                     } else {
-                        monotonicity_right += Math.pow(this.getBoard()[row][col], 4.0) - Math.pow(this.getBoard()[row-1][col], 4.0);
+                        monotonicity_right += Math.pow(this.getBoard()[row][col], 4.0) - Math.pow(this.getBoard()[row - 1][col], 4.0);
                     }
                 }
 
-               tot = ((11.0 * empty) + (700 * merges) - (47 * Math.min(monotonicity_left, monotonicity_right) - (11 * sum))) - calculateClusteringScore();
+                tot = (((11.0 * empty) + (700 * merges) - (47 * Math.min(monotonicity_left, monotonicity_right) - (11 * sum))) - calculateClusteringScore()) + heuristicScore2();
 
             }
         }
 
         return tot;
+    }
+    public double compareBoardToWeightMatrix(int[][] weightMatrix, int[][] board) {
+        double score = 0.0;
+
+        for (int row = 0; row < board.length; row++) {
+            for (int i = 0; i < board[row].length; i++) {
+                score += weightMatrix[row][i] * board[row][i];
+            }
+        }
+        return score;
+    }
+
+    public boolean canOnlyGoRight() {
+        Node up = this.getUp();
+        Node down = this.getDown();
+        Node left = this.getLeft();
+
+        if (!Arrays.deepEquals(this.getBoard(), up.getBoard()) ||
+            !Arrays.deepEquals(this.getBoard(), down.getBoard()) ||
+            !Arrays.deepEquals(this.getBoard(), left.getBoard())) {
+            return false;
+        }
+        return true;
+    }
+
+    public double heuristicScore2() {
+        double score = 0.0;
+
+        if (this.canOnlyGoRight()) {
+            score += -100000000;
+        }
+
+        double gradLeft = this.compareBoardToWeightMatrix(gradiantLeft, this.board);
+        double gradRight = this.compareBoardToWeightMatrix(gradiantRight, this.board);
+
+        score += Math.max(gradLeft, gradRight) + this.calculateClusteringScore();
+
+        return score;
     }
 
     public double heuristicScore_WWW() {
@@ -285,11 +351,11 @@ public class Node {
     }
 
     public Node[] getMovePermutations() {
-        Node[] nodes = new Node[4];
+        Node[] nodes = new Node[3];
         nodes[0] = this.getUp();
-        nodes[1] = this.getRight();
-        nodes[2] = this.getDown();
-        nodes[3] = this.getLeft();
+        nodes[1] = this.getDown();
+        nodes[2] = this.getLeft();
+        //nodes[1] = this.getRight();
         return nodes;
     }
 
