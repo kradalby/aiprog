@@ -201,7 +201,7 @@ public class Node {
 
             for (int col = 0; col < this.getBoard()[row].length; col++) {
                 int rank = this.getBoard()[row][col];
-                sum += Math.pow(rank, 2);
+                sum += Math.pow(rank, 3.5);
                 if (rank == 0) {
                     empty++;
                 } else {
