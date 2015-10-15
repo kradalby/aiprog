@@ -205,7 +205,6 @@ public class Node {
         return clusteringScore;
     }
 
-
     public double heuristicScore() {
 
         double score = 0;
@@ -260,6 +259,7 @@ public class Node {
 
         return tot;
     }
+
     public double compareBoardToWeightMatrix(int[][] weightMatrix, int[][] board) {
         double score = 0.0;
 
@@ -297,6 +297,7 @@ public class Node {
         score += Math.max(gradLeft, gradRight) + this.calculateClusteringScore();
 
         return score;
+
     }
 
     public double heuristicScore_WWW() {
