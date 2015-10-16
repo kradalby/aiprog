@@ -208,6 +208,61 @@ public class Node {
         return clusteringScore;
     }
 
+    public double heuristicScore() {
+
+        double score = 0;
+        float sum = 0;
+
+        int empty = 0;
+        int merges = 0;
+        int prev = 0;
+        int counter = 0;
+        double tot = 0;
+
+        for (int row = 0; row < this.getBoard().length; row++) {
+            for (int col = 0; col < this.getBoard()[row].length; col++) {
+                int rank = this.getBoard()[row][col];
+                if (rank >= 2) {
+                    // the score is the total sum of the tile and all intermediate merged tiles
+                    score += (rank - 1) * (1 << rank);
+                }
+
+                // Heuristic score
+                sum += Math.pow(rank, 3.5);
+                if (rank == 0) {
+                    empty++;
+                } else {
+                    if (prev == rank) {
+                        counter++;
+                    } else if (counter > 0) {
+                        merges += 1 + counter;
+                        counter = 0;
+                    }
+                    prev = rank;
+                }
+
+                if (counter > 0) {
+                    merges += 1 + counter;
+                }
+
+                float monotonicity_left = 0;
+                float monotonicity_right = 0;
+                for (col = 0; col < this.getBoard()[row].length; col++) {
+                    if (this.getBoard()[row - 1][col] > this.getBoard()[row][col]) {
+                        monotonicity_left += Math.pow(this.getBoard()[row - 1][col], 4.0) - Math.pow(this.getBoard()[row][col], 4.0);
+                    } else {
+                        monotonicity_right += Math.pow(this.getBoard()[row][col], 4.0) - Math.pow(this.getBoard()[row - 1][col], 4.0);
+                    }
+                }
+
+                tot = (((11.0 * empty) + (700 * merges) - (47 * Math.min(monotonicity_left, monotonicity_right) - (11 * sum))) - calculateClusteringScore()) + heuristicScore2();
+
+            }
+        }
+
+        return tot;
+    }
+
     public double compareBoardToWeightMatrix(int[][] weightMatrix, int[][] board) {
         double score = 0.0;
 
@@ -240,7 +295,7 @@ public class Node {
         return true;
     }
 
-    public double heuristicScore() {
+    public double heuristicScore2() {
         double score = 0.0;
 
         double[] weightMatrixList = new double[4];
