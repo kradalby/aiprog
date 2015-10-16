@@ -26,6 +26,7 @@ public class WorkerThread implements Runnable {
 
     @Override
     public void run() {
-        scores.put(Expectiminimax.expectiminimax(node, depth), dir);
+        double score = Expectiminimax.expectiminimax(node, depth);
+        scores.put(score, dir);
     }
 }

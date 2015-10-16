@@ -60,7 +60,7 @@ public class Game2048 extends Application {
 
     @Override
     public void stop() {
-        root.getGameManager().saveRecord();
+        //root.getGameManager().saveRecord();
     }
 
     /**

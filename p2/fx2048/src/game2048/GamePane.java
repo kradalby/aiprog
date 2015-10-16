@@ -1,6 +1,7 @@
 package game2048;
 
 import expectimax2048.Expectiminimax;
+import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.value.ChangeListener;
@@ -37,7 +38,10 @@ public class GamePane extends StackPane {
 
     public GamePane() {
         gameManager = new GameManager();
-        gameManager.setToolBar(createToolBar());
+        //gameManager.setToolBar(createToolBar());
+        gameManager.setAnimationIn(Interpolator.LINEAR);
+        gameManager.setAnimationOut(Interpolator.LINEAR);
+        gameManager.setNoAnimationTime();
         gameBounds = gameManager.getLayoutBounds();
         ex = new Expectiminimax();
 
@@ -62,48 +66,19 @@ public class GamePane extends StackPane {
     private void addKeyHandler(Node node) {
         node.setOnKeyPressed(ke -> {
             KeyCode keyCode = ke.getCode();
-            if (keyCode.equals(KeyCode.S)) {
-                gameManager.saveSession();
-                return;
-            }
-            if (keyCode.equals(KeyCode.R)) {
-                gameManager.restoreSession();
-                return;
-            }
-            if (keyCode.equals(KeyCode.P)) {
-                gameManager.pauseGame();
-                return;
-            }
-            if (keyCode.equals(KeyCode.Q) || keyCode.equals(KeyCode.ESCAPE)) {
-                gameManager.quitGame();
-                return;
-            }
             if (keyCode.isArrowKey()) {
                 Direction direction = Direction.valueFor(keyCode);
                 move(direction);
             }
             if (keyCode.isWhitespaceKey()) {
-                //Timeline timeOut = new Timeline(new KeyFrame(Duration.seconds(0.6), new EventHandler<ActionEvent>() {
-                //    @Override
-                //    public void handle(ActionEvent event) {
-                //        Direction dir = ex.getNextMove(gameManager.getGameGrid(), gameManager.getBoard().getGameScoreProperty());
-                //        move(dir);
-                //    }
-                //}));
-                //timeOut.setCycleCount(Timeline.INDEFINITE);
-                //timeOut.play();
-                // while (true) {
-                //     try {
-                //         Direction dir = ex.getNextMove(gameManager.getGameGrid(), gameManager.getBoard().getGameScoreProperty());
-                //         move(dir);
-                //         Thread.sleep(700);
-                //     } catch (InterruptedException e) {
-                //         e.printStackTrace();
-                //     }
-                // }
                 expectiminimaxHandler();
-
             }
+            if (keyCode.equals(KeyCode.S)) {
+                Direction dir = ex.getNextMove(gameManager.getGameGrid(), gameManager.getBoard().getGameScoreProperty(), false);
+                move(dir);
+            }
+
+
         });
     }
 
@@ -124,7 +99,7 @@ public class GamePane extends StackPane {
             }
         };
         task.setOnSucceeded(event -> {
-            Direction dir = ex.getNextMoveThreaded(gameManager.getGameGrid(), gameManager.getBoard().getGameScoreProperty());
+            Direction dir = ex.getNextMove(gameManager.getGameGrid(), gameManager.getBoard().getGameScoreProperty(), false);
             move(dir);
             expectiminimaxHandler();
         });
@@ -146,12 +121,12 @@ public class GamePane extends StackPane {
         HBox toolbar=new HBox();    
         toolbar.setAlignment(Pos.CENTER);
         toolbar.setPadding(new Insets(10.0));
-        Button btItem1 = createButtonItem("mSave", "Save Session", t->gameManager.saveSession());
-        Button btItem2 = createButtonItem("mRestore", "Restore Session", t->gameManager.restoreSession());
-        Button btItem3 = createButtonItem("mPause", "Pause Game", t->gameManager.pauseGame());
-        Button btItem4 = createButtonItem("mReplay", "Try Again", t->gameManager.tryAgain());
-        Button btItem5 = createButtonItem("mInfo", "About the Game", t->gameManager.aboutGame());
-        toolbar.getChildren().setAll(btItem1, btItem2, btItem3, btItem4, btItem5);
+        //Button btItem1 = createButtonItem("mSave", "Save Session", t->gameManager.saveSession());
+        //Button btItem2 = createButtonItem("mRestore", "Restore Session", t->gameManager.restoreSession());
+        //Button btItem3 = createButtonItem("mPause", "Pause Game", t->gameManager.pauseGame());
+        //Button btItem4 = createButtonItem("mReplay", "Try Again", t->gameManager.tryAgain());
+        //Button btItem5 = createButtonItem("mInfo", "About the Game", t->gameManager.aboutGame());
+        //toolbar.getChildren().setAll(btItem1, btItem2, btItem3, btItem4, btItem5);
         Button btItem6 = createButtonItem("mQuit", "Quit Game", t->gameManager.quitGame());
         toolbar.getChildren().add(btItem6);
         return toolbar;

@@ -21,42 +21,24 @@ public class Expectiminimax {
         //System.out.println("Starting Expectiminimax");
         double alpha = 0;
         if (depth == 0) {
-            //System.out.println("Reached depth 0");
-            return node.heuristicScore();
+            double heuristicScore = node.heuristicScore();
+            return heuristicScore;
         }
-
-//        if () {
-//            alpha = 999999999;
-//            for (Node child: node.getPermutations()) {
-//                alpha = Math.min(alpha, expectiminimax(child, depth - 1));
-//            }
-//        }
         if (node.getTurn()) {
-            alpha = -999999999;
-            ArrayList<Node> children = node.getPermutations();
-            //System.out.println("--------------------------------");
-            //System.out.println(node.getTurn());
-            //for (Node child : children) {
-            //    System.out.println(child);
-            //}
-            //System.out.println("--------------------------------");
+            alpha = Double.NEGATIVE_INFINITY;
+            Node[] children = node.getPermutations();
             for (Node child : children) {
                 alpha = Math.max(alpha, expectiminimax(child, depth - 1));
             }
-        } else if (!node.getTurn()) {
-            alpha = 0;
+        } else {
+        //} else if (!node.getTurn()) {
+            alpha = 0.0;
             Node[] children = node.getMovePermutations();
-            //System.out.println("--------------------------------");
-            //System.out.println(node.getTurn());
-            //for (Node child : children) {
-            //    System.out.println(child);
-            //}
-            //System.out.println("--------------------------------");
             for (Node child : children) {
-                alpha = alpha + (node.getProbability() * expectiminimax(child, depth - 1));
+                //alpha = alpha + (node.getProbability() * expectiminimax(child, depth - 1));
+                alpha += (node.getProbability() * expectiminimax(child, depth - 1));
             }
         }
-        //System.out.println(depth);
         return alpha;
 
     }
@@ -65,12 +47,12 @@ public class Expectiminimax {
         int depth = baseDepth;
 
         if (node.getNumberOfEmptyCells() != 0) {
-            if (node.getNumberOfEmptyCells() < 3) {
+            if (node.getNumberOfEmptyCells() < 4) {
                 depth = baseDepth + 2;
                 System.out.println("Changed depth to " + depth);
-            } else if (node.getNumberOfEmptyCells() < 6) {
-                depth = baseDepth + 1;
-                System.out.println("Changed depth to " + depth);
+            //} else if (node.getNumberOfEmptyCells() < 6) {
+            //    depth = baseDepth + 2;
+            //    System.out.println("Changed depth to " + depth);
             } else {
                 depth = baseDepth;
                 System.out.println("Changed depth to " + depth);
@@ -81,31 +63,21 @@ public class Expectiminimax {
 
     }
 
-    public Direction getNextMove(Map<Location, Tile> current, int score) {
-        System.out.println("Getting next move");
+    public Direction runExpectiminimax(Node node, int depth) {
         Map<Double, Direction> scores = new HashMap<>();
-        int baseDepth = 3;
-        int depth = baseDepth;
-        Node node = new Node();
-        node.setScore(score);
-        node.populateBoard(current);
-        node.getPermutations();
-
-        depth = getDynamicDepth(node, baseDepth);
-
-        System.out.println(new PrettyPrintingMap<Double, Direction>(scores));
+        depth = getDynamicDepth(node, depth);
 
         Node up = node.getUp();
-        //Node right = node.getRight();
+        Node right = node.getRight();
         Node down = node.getDown();
         Node left = node.getLeft();
 
         if (!Arrays.deepEquals(node.getBoard(), up.getBoard())) {
             scores.put(this.expectiminimax(node.getUp(), depth), Direction.UP);
         }
-        // if (!Arrays.deepEquals(node.getBoard(), right.getBoard())) {
-        //     scores.put(this.expectiminimax(node.getRight(), depth), Direction.RIGHT);
-        // }
+        if (!Arrays.deepEquals(node.getBoard(), right.getBoard())) {
+            scores.put(this.expectiminimax(node.getRight(), depth), Direction.RIGHT);
+        }
         if (!Arrays.deepEquals(node.getBoard(), down.getBoard())) {
             scores.put(this.expectiminimax(node.getDown(), depth), Direction.DOWN);
         }
@@ -114,26 +86,19 @@ public class Expectiminimax {
         }
 
         System.out.println(new PrettyPrintingMap<Double, Direction>(scores));
-
-        return scores.get((Collections.max(scores.keySet())));
+        double heuristic = Collections.max(scores.keySet());
+        Direction dir = scores.get(heuristic);
+        return dir;
     }
 
-    public Direction getNextMoveThreaded(Map<Location, Tile> current, int score) {
-        System.out.println("Getting next threaded move");
+    public Direction runExpectiminimaxThreaded(Node node, int depth) {
+        depth = getDynamicDepth(node, depth);
+
         Map<Double, Direction> scores = new HashMap<>();
-        int baseDepth = 3;
-        int depth = baseDepth;
-        Node node = new Node();
-        node.setScore(score);
-        node.populateBoard(current);
-        node.getPermutations();
-
-        depth = getDynamicDepth(node, baseDepth);
-
         //System.out.println(new PrettyPrintingMap<Double, Direction>(scores));
 
         Node up = node.getUp();
-        //Node right = node.getRight();
+        Node right = node.getRight();
         Node down = node.getDown();
         Node left = node.getLeft();
 
@@ -142,10 +107,10 @@ public class Expectiminimax {
             Runnable workerUp = new WorkerThread("UP", up, Direction.UP, depth, scores);
             executor.execute(workerUp);
         }
-        // if (!Arrays.deepEquals(node.getBoard(), right.getBoard())) {
-        //     Runnable workerRight = new WorkerThread("RIGHT", right, Direction.RIGHT, depth, scores);
-        //     executor.execute(workerRight);
-        // }
+        if (!Arrays.deepEquals(node.getBoard(), right.getBoard())) {
+            Runnable workerRight = new WorkerThread("RIGHT", right, Direction.RIGHT, depth, scores);
+            executor.execute(workerRight);
+        }
         if (!Arrays.deepEquals(node.getBoard(), down.getBoard())) {
             Runnable workerDown = new WorkerThread("DOWN", down, Direction.DOWN, depth, scores);
             executor.execute(workerDown);
@@ -165,8 +130,33 @@ public class Expectiminimax {
 
         System.out.println("Scores:");
         System.out.println(new PrettyPrintingMap<Double, Direction>(scores));
+        double heuristic = Collections.max(scores.keySet());
+        Direction dir = scores.get(heuristic);
 
-        return scores.get((Collections.max(scores.keySet())));
+        System.out.println("Heuristic: " + heuristic);
+        System.out.println("Direction: " + dir.toString());
+
+        return dir;
+
+    }
+
+    public Direction getNextMove(Map<Location, Tile> current, int score, boolean threaded) {
+        Direction dir;
+        System.out.println("Getting next threaded move");
+        int baseDepth = 4;
+        int depth = baseDepth;
+        Node node = new Node();
+        node.setScore(score);
+        node.populateBoard(current);
+
+        if (threaded) {
+            dir = runExpectiminimaxThreaded(node, depth);
+        } else {
+            dir = runExpectiminimax(node, depth);
+        }
+
+
+        return dir;
     }
 
 }
