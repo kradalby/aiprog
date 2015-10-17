@@ -38,9 +38,9 @@ public class Expectiminimax {
                 //alpha = alpha + (node.getProbability() * expectiminimax(child, depth - 1));
                 alpha += (node.getProbability() * expectiminimax(child, depth - 1));
             }
+            System.out.println("ALPHA RESULT:" + alpha);
         }
         return alpha;
-
     }
 
     public int getDynamicDepth(Node node, int baseDepth) {
@@ -85,9 +85,15 @@ public class Expectiminimax {
             scores.put(this.expectiminimax(node.getLeft(), depth), Direction.LEFT);
         }
 
-        System.out.println(new PrettyPrintingMap<Double, Direction>(scores));
+        //System.out.println(new PrettyPrintingMap<Double, Direction>(scores));
         double heuristic = Collections.max(scores.keySet());
         Direction dir = scores.get(heuristic);
+
+        System.out.println("Scores:");
+        System.out.println(new PrettyPrintingMap<Double, Direction>(scores));
+
+        System.out.println("Heuristic: " + heuristic);
+
         return dir;
     }
 
@@ -137,13 +143,12 @@ public class Expectiminimax {
         System.out.println("Direction: " + dir.toString());
 
         return dir;
-
     }
 
     public Direction getNextMove(Map<Location, Tile> current, int score, boolean threaded) {
         Direction dir;
-        System.out.println("Getting next threaded move");
-        int baseDepth = 4;
+        //System.out.println("Getting next move");
+        int baseDepth = 3;
         int depth = baseDepth;
         Node node = new Node();
         node.setScore(score);
@@ -154,6 +159,10 @@ public class Expectiminimax {
         } else {
             dir = runExpectiminimax(node, depth);
         }
+
+        //System.out.println(node);
+
+        System.out.println(dir);
 
 
         return dir;

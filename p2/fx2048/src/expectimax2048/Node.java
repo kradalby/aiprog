@@ -13,17 +13,17 @@ import java.util.*;
  */
 public class Node {
     private int[][] board;
-    private Node parent;
     private double probability;
     private boolean turn;
     private int score;
     private ArrayList<Point> empty;
+    private int emptyScore = 0;
 
     private static int[][] snake = new int[][] {
-            {500,200,150,60},
-            {10,15,20,30},
-            {5,4,5,4},
-            {0,0,0,0}
+            {16,15,14,13},
+            {9,10,11,12},
+            {8,7,6,5},
+            {1,2,3,4}
     };
 
     private static int[][] gradiantRight = new int[][] {
@@ -51,7 +51,6 @@ public class Node {
 
     public Node newNode(boolean turn) {
         Node node = new Node();
-        node.setParent(this);
         node.setBoard(this.getCopyOfBoard());
         node.setScore(this.score);
         node.setTurn(turn);
@@ -95,14 +94,7 @@ public class Node {
     }
 
     public Node[] getPermutations() {
-        for (int row = 0; row < this.getBoard().length; row++) {
-            for (int col = 0; col < this.getBoard()[row].length; col++) {
-                if (this.getBoard()[row][col] == 0) {
-                    this.empty.add(new Point(col, row));
-                }
-            }
-        }
-
+        getNumberOfEmptyCells();
         ArrayList<Node> nodes = new ArrayList<>();
         for (Point t: empty) {
             Node node2 = this.newNode(false);
@@ -155,7 +147,7 @@ public class Node {
     }
 
     public int getNumberOfEmptyCells(){
-        if (this.empty.size() == 0) {
+        if (this.emptyScore == 0) {
             for (int row = 0; row < this.getBoard().length; row++) {
                 for (int col = 0; col < this.getBoard()[row].length; col++) {
                     if (this.getBoard()[row][col] == 0) {
@@ -164,7 +156,7 @@ public class Node {
                 }
             }
         }
-        return this.empty.size();
+        return this.emptyScore;
     }
 
     private  int calculateClusteringScore() {
@@ -251,6 +243,7 @@ public class Node {
 
         Arrays.sort(weightMatrixList);
         double weightMatrix = weightMatrixList[weightMatrixList.length - 1];
+        //double weightMatrix = this.compareBoardToWeightMatrix(snake, this.board);
 
         score = weightMatrix;
 
@@ -285,15 +278,6 @@ public class Node {
 
     public int[][] getBoard(){
         return this.board;
-    }
-
-
-    public Node getParent() {
-        return parent;
-    }
-
-    public void setParent(Node parent) {
-        this.parent = parent;
     }
 
     public void setBoard(int[][] board) {
