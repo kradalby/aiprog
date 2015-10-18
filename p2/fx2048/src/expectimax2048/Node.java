@@ -14,16 +14,16 @@ import java.util.*;
 public class Node {
     private int[][] board;
     private double probability;
-    private boolean turn;
+    private NodeType type;
     private int score;
     private ArrayList<Point> empty;
     private int emptyScore = 0;
 
     private static int[][] snake = new int[][] {
-            {16,15,14,13},
-            {9,10,11,12},
-            {8,7,6,5},
-            {1,2,3,4}
+            {16,8,8,7},
+            {4,5,6,6},
+            {3,2,2,1},
+            {0,0,0,0}
     };
 
     private static int[][] gradiantRight = new int[][] {
@@ -39,7 +39,8 @@ public class Node {
             {0,-1,-2,-3}
     };
 
-    public Node() {
+    public Node(NodeType type) {
+        this.type = type;
         empty = new ArrayList<>();
         board = new int [][] {
                 {0,0,0,0},
@@ -49,23 +50,22 @@ public class Node {
         };
     }
 
-    public Node newNode(boolean turn) {
-        Node node = new Node();
+    public Node newNode(NodeType type) {
+        Node node = new Node(type);
         node.setBoard(this.getCopyOfBoard());
         node.setScore(this.score);
-        node.setTurn(turn);
 
         return node;
     }
 
     public Node getLeft() {
-        Node node = this.newNode(true);
+        Node node = this.newNode(NodeType.CHANCE);
         node.moveLeft();
         return node;
     }
 
     public Node getRight() {
-        Node node = this.newNode(true);
+        Node node = this.newNode(NodeType.CHANCE);
         Util.inplaceReverse(node.getBoard());
         node.moveLeft();
         Util.inplaceReverse(node.getBoard());
@@ -73,7 +73,7 @@ public class Node {
     }
 
     public Node getUp() {
-        Node node = this.newNode(true);
+        Node node = this.newNode(NodeType.CHANCE);
         Util.inplaceRotate(node.getBoard());
         Util.inplaceRotate(node.getBoard());
         Util.inplaceRotate(node.getBoard());
@@ -83,7 +83,7 @@ public class Node {
     }
 
     public Node getDown() {
-        Node node = this.newNode(true);
+        Node node = this.newNode(NodeType.CHANCE);
         Util.inplaceRotate(node.getBoard());
         node.moveLeft();
         Util.inplaceRotate(node.getBoard());
@@ -93,22 +93,48 @@ public class Node {
         return node;
     }
 
+    public Node[] getMovePermutations() {
+        Node[] nodes = new Node[4];
+        nodes[0] = this.getUp();
+        nodes[1] = this.getDown();
+        nodes[2] = this.getLeft();
+        nodes[3] = this.getRight();
+        return nodes;
+    }
+
     public Node[] getPermutations() {
         getNumberOfEmptyCells();
         ArrayList<Node> nodes = new ArrayList<>();
         for (Point t: empty) {
-            Node node2 = this.newNode(false);
+            Node node2 = this.newNode(NodeType.MAX);
             node2.setProbability(0.9);
             node2.getBoard()[t.y][t.x] = 2;
             nodes.add(node2);
 
-            Node node4 = this.newNode(false);
+            Node node4 = this.newNode(NodeType.MAX);
             node4.setProbability(0.1);
             node4.getBoard()[t.y][t.x] = 4;
             nodes.add(node4);
 
         }
         return nodes.toArray(new Node[nodes.size()]);
+    }
+
+    public void populateBoard(Map<Location, Tile> grid) {
+        for (Location loc : grid.keySet()) {
+            Tile t = grid.get(loc);
+            if (t != null) {
+                this.board[loc.getY()][loc.getX()] = t.getValue().intValue();
+            }
+        }
+    }
+
+    private int[][] getCopyOfBoard() {
+        int[][] newBoard = new int[4][4];
+        for (int i = 0; i < this.board.length; i++) {
+            newBoard[i] = this.board[i].clone();
+        }
+        return newBoard;
     }
 
     private void moveLeft() {
@@ -155,6 +181,7 @@ public class Node {
                     }
                 }
             }
+            this.emptyScore = this.empty.size();
         }
         return this.emptyScore;
     }
@@ -219,19 +246,6 @@ public class Node {
         return score;
     }
 
-    public boolean canOnlyGoRight() {
-        Node up = this.getUp();
-        Node down = this.getDown();
-        Node left = this.getLeft();
-
-        if (!Arrays.deepEquals(this.getBoard(), up.getBoard()) ||
-            !Arrays.deepEquals(this.getBoard(), down.getBoard()) ||
-            !Arrays.deepEquals(this.getBoard(), left.getBoard())) {
-            return false;
-        }
-        return true;
-    }
-
     public double heuristicScore() {
         double score = 0.0;
 
@@ -259,23 +273,6 @@ public class Node {
         return Math.max(score, Math.min(actualScore, 1));
     }
 
-    public void populateBoard(Map<Location, Tile> grid) {
-        for (Location loc : grid.keySet()) {
-            Tile t = grid.get(loc);
-            if (t != null) {
-                this.board[loc.getY()][loc.getX()] = t.getValue().intValue();
-            }
-        }
-    }
-
-    private int[][] getCopyOfBoard() {
-        int[][] newBoard = new int[4][4];
-        for (int i = 0; i < this.board.length; i++) {
-            newBoard[i] = this.board[i].clone();
-        }
-        return newBoard;
-    }
-
     public int[][] getBoard(){
         return this.board;
     }
@@ -292,21 +289,8 @@ public class Node {
         this.probability = probability;
     }
 
-    public Node[] getMovePermutations() {
-        Node[] nodes = new Node[4];
-        nodes[0] = this.getUp();
-        nodes[1] = this.getDown();
-        nodes[2] = this.getLeft();
-        nodes[3] = this.getRight();
-        return nodes;
-    }
-
-    public boolean getTurn() {
-        return turn;
-    }
-
-    public void setTurn(boolean turn) {
-        this.turn = turn;
+    public NodeType getType() {
+        return this.type;
     }
 
     public int getScore() {
@@ -331,23 +315,26 @@ public class Node {
     }
 
     public static void main(String[] args) {
-        Node node = new Node();
+        Node node = new Node(NodeType.MAX);
         node.setBoard(new int [][] {
-                {128,32,8,2},
-                {64,4,2,2},
-                {8,2,2,4},
-                {0,8,4,2}
+                {4,2,0,0},
+                {2,0,0,0},
+                {0,0,0,0},
+                {0,0,0,0},
         });
-        node = node.getLeft();
-        System.out.println("stuff");
-        Node[] nodes = node.getPermutations();
-        System.out.println("derp");
-        for (Node n : nodes) {
-            System.out.println(n);
-        }
+        //node = node.getLeft();
+        //System.out.println("stuff");
+        //Node[] nodes = node.getPermutations();
+        //System.out.println("derp");
+        //for (Node n : nodes) {
+        //    System.out.println(n);
+        //}
+
+
 
         Expectiminimax e = new Expectiminimax();
-        System.out.println(e.runExpectiminimax(node, 6));
+        System.out.println(e.runExpectiminimax(node, 2));
+        System.out.println(node);
     }
 }
 

@@ -14,45 +14,94 @@ import java.util.concurrent.TimeUnit;
  */
 public class Expectiminimax {
 
+    public static double highest = 0.0;
+
     public Expectiminimax() {
     }
 
     public static double expectiminimax(Node node, int depth) {
-        //System.out.println("Starting Expectiminimax");
-        double alpha = 0;
+        double alpha = 0.0;
+
         if (depth == 0) {
-            double heuristicScore = node.heuristicScore();
-            return heuristicScore;
+            double heuristic = node.heuristicScore();
+            return heuristic;
         }
-        if (node.getTurn()) {
+
+        if (node.getType() == NodeType.MAX) {
+            //System.out.println("Got a max node");
             alpha = Double.NEGATIVE_INFINITY;
-            Node[] children = node.getPermutations();
+
+            Node[] children = node.getMovePermutations();
+
             for (Node child : children) {
                 alpha = Math.max(alpha, expectiminimax(child, depth - 1));
             }
-        } else {
-        //} else if (!node.getTurn()) {
+
+        } else if (node.getType() == NodeType.CHANCE) {
+            //System.out.println("Got a Chance node");
             alpha = 0.0;
-            Node[] children = node.getMovePermutations();
+
+            Node[] children = node.getPermutations();
+
             for (Node child : children) {
-                //alpha = alpha + (node.getProbability() * expectiminimax(child, depth - 1));
-                alpha += (node.getProbability() * expectiminimax(child, depth - 1));
+                alpha += child.getProbability() * expectiminimax(child, depth - 1);
             }
-            System.out.println("ALPHA RESULT:" + alpha);
         }
         return alpha;
+
     }
+
+//    public static double expectiminimax(Node node, int depth) {
+//        //System.out.println("Starting Expectiminimax");
+//        double alpha = 0;
+//        if (depth == 0) {
+//            double heuristicScore = node.heuristicScore();
+//            return heuristicScore;
+//        }
+//        if (node.getTurn()) {
+//            alpha = Double.NEGATIVE_INFINITY;
+//            Node[] children = node.getPermutations();
+//            for (Node child : children) {
+//                alpha = Math.max(alpha, expectiminimax(child, depth - 1));
+//            }
+//        } else {
+//        //} else if (!node.getTurn()) {
+//            alpha = 0.0;
+//            Node[] children = node.getMovePermutations();
+//            for (Node child : children) {
+//                System.out.println("PROBABILITY: " + node.getProbability());
+//                double result = (node.getProbability() * (expectiminimax(child, depth - 1)));
+//                alpha += result;
+//
+//                if (result > highest) {
+//                    highest = result;
+//                }
+//            }
+//            System.out.println("------------------");
+//            System.out.println(alpha);
+//            System.out.println(children.length);
+//            alpha = alpha / children.length;
+//            System.out.println("ALPHA RESULT:" + alpha);
+//        }
+//        return alpha;
+//    }
 
     public int getDynamicDepth(Node node, int baseDepth) {
         int depth = baseDepth;
 
         if (node.getNumberOfEmptyCells() != 0) {
-            if (node.getNumberOfEmptyCells() < 4) {
+            if (node.getNumberOfEmptyCells() < 2) {
+                depth = baseDepth + 4;
+                System.out.println("Changed depth to " + depth);
+            } else if (node.getNumberOfEmptyCells() < 4) {
+                depth = baseDepth + 3;
+                System.out.println("Changed depth to " + depth);
+            } else if (node.getNumberOfEmptyCells() < 6) {
                 depth = baseDepth + 2;
                 System.out.println("Changed depth to " + depth);
-            //} else if (node.getNumberOfEmptyCells() < 6) {
-            //    depth = baseDepth + 2;
-            //    System.out.println("Changed depth to " + depth);
+            } else if (node.getNumberOfEmptyCells() < 8) {
+                depth = baseDepth + 1;
+                System.out.println("Changed depth to " + depth);
             } else {
                 depth = baseDepth;
                 System.out.println("Changed depth to " + depth);
@@ -149,15 +198,15 @@ public class Expectiminimax {
         Direction dir;
         //System.out.println("Getting next move");
         int baseDepth = 3;
-        int depth = baseDepth;
-        Node node = new Node();
+        Node node = new Node(NodeType.CHANCE);
         node.setScore(score);
         node.populateBoard(current);
 
+        threaded = true;
         if (threaded) {
-            dir = runExpectiminimaxThreaded(node, depth);
+            dir = runExpectiminimaxThreaded(node, baseDepth);
         } else {
-            dir = runExpectiminimax(node, depth);
+            dir = runExpectiminimax(node, baseDepth);
         }
 
         //System.out.println(node);
