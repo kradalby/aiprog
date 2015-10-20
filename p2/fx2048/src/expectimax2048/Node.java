@@ -20,9 +20,9 @@ public class Node {
     private int emptyScore = 0;
 
     private static int[][] snake = new int[][] {
-            {16,8,8,7},
-            {4,5,6,6},
-            {3,2,2,1},
+            {1024,512,256,256},
+            {32,64,64,128},
+            {0,0,0,0},
             {0,0,0,0}
     };
 
@@ -127,6 +127,7 @@ public class Node {
                 this.board[loc.getY()][loc.getX()] = t.getValue().intValue();
             }
         }
+        System.out.println(this);
     }
 
     private int[][] getCopyOfBoard() {
@@ -156,6 +157,13 @@ public class Node {
             }
 
             // Move all the things
+            for (int i = 0; i < this.board[row].length; i++) {
+                if (this.board[row][i] == 0 && this.board[row].length > i + 1) {
+                    this.board[row][i] = this.board[row][i+1];
+                    this.board[row][i+1] = 0;
+                }
+            }
+
             for (int i = 0; i < this.board[row].length; i++) {
                 if (this.board[row][i] == 0 && this.board[row].length > i + 1) {
                     this.board[row][i] = this.board[row][i+1];
@@ -257,20 +265,11 @@ public class Node {
 
         Arrays.sort(weightMatrixList);
         double weightMatrix = weightMatrixList[weightMatrixList.length - 1];
-        //double weightMatrix = this.compareBoardToWeightMatrix(snake, this.board);
+        //double weightMatrix = this.compareBoardToWeightMatrix(gradiantLeft, this.board);
 
         score = weightMatrix;
 
         return score;
-    }
-
-    public double heuristicScore_WWW() {
-
-        int actualScore = this.getScore();
-        int numberOfEmptyCells = this.getNumberOfEmptyCells();
-        int clusteringScore = this.calculateClusteringScore();
-        int score = (int)(Math.log(numberOfEmptyCells)*Math.pow(numberOfEmptyCells, 2) -clusteringScore);
-        return Math.max(score, Math.min(actualScore, 1));
     }
 
     public int[][] getBoard(){
@@ -281,8 +280,10 @@ public class Node {
         this.board = board;
     }
 
-    public double getProbability() {
-        return probability;
+    public double getProbability(int possibleChildren) {
+        double halfPossibleChildren = possibleChildren / 2;
+        double chance = (1 / halfPossibleChildren) * probability;
+        return chance;
     }
 
     public void setProbability(double probability) {
@@ -317,7 +318,7 @@ public class Node {
     public static void main(String[] args) {
         Node node = new Node(NodeType.MAX);
         node.setBoard(new int [][] {
-                {4,2,0,0},
+                {4,4,0,0},
                 {2,0,0,0},
                 {0,0,0,0},
                 {0,0,0,0},
@@ -333,8 +334,14 @@ public class Node {
 
 
         Expectiminimax e = new Expectiminimax();
-        System.out.println(e.runExpectiminimax(node, 2));
+        System.out.println(e.runExpectiminimax(node, 8));
         System.out.println(node);
+
+        for (Node child: node.getMovePermutations()) {
+            System.out.println(child);
+            System.out.println(child.heuristicScore());
+        }
+
     }
 }
 

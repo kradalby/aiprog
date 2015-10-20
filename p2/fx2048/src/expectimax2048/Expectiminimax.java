@@ -44,8 +44,9 @@ public class Expectiminimax {
             Node[] children = node.getPermutations();
 
             for (Node child : children) {
-                alpha += child.getProbability() * expectiminimax(child, depth - 1);
+                alpha += child.getProbability(children.length) * expectiminimax(child, depth - 1);
             }
+
         }
         return alpha;
 
@@ -202,7 +203,7 @@ public class Expectiminimax {
         node.setScore(score);
         node.populateBoard(current);
 
-        threaded = true;
+        threaded = false;
         if (threaded) {
             dir = runExpectiminimaxThreaded(node, baseDepth);
         } else {
