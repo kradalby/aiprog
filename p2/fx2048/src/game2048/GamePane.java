@@ -74,7 +74,7 @@ public class GamePane extends StackPane {
                 expectiminimaxHandler();
             }
             if (keyCode.equals(KeyCode.S)) {
-                Direction dir = ex.getNextMove(gameManager.getGameGrid(), gameManager.getBoard().getGameScoreProperty(), false);
+                Direction dir = ex.getNextMove(gameManager.getGameGrid(), false);
                 move(dir);
             }
 
@@ -99,7 +99,7 @@ public class GamePane extends StackPane {
             }
         };
         task.setOnSucceeded(event -> {
-            Direction dir = ex.getNextMove(gameManager.getGameGrid(), gameManager.getBoard().getGameScoreProperty(), false);
+            Direction dir = ex.getNextMove(gameManager.getGameGrid(), false);
             move(dir);
             expectiminimaxHandler();
         });

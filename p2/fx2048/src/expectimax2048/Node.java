@@ -15,7 +15,6 @@ public class Node {
     private int[][] board;
     private double probability;
     private NodeType type;
-    private int score;
     private ArrayList<Point> empty;
     private int emptyScore = 0;
 
@@ -53,7 +52,6 @@ public class Node {
     public Node newNode(NodeType type) {
         Node node = new Node(type);
         node.setBoard(this.getCopyOfBoard());
-        node.setScore(this.score);
 
         return node;
     }
@@ -246,14 +244,6 @@ public class Node {
         return score;
     }
 
-    public double calculatePotentialMergerScore() {
-        double score = 0.0;
-
-
-
-        return score;
-    }
-
     public double heuristicScore() {
         double score = 0.0;
 
@@ -294,14 +284,6 @@ public class Node {
         return this.type;
     }
 
-    public int getScore() {
-        return score;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
-    }
-
     @Override
     public String toString() {
         String s = "";
@@ -323,15 +305,6 @@ public class Node {
                 {0,0,0,0},
                 {0,0,0,0},
         });
-        //node = node.getLeft();
-        //System.out.println("stuff");
-        //Node[] nodes = node.getPermutations();
-        //System.out.println("derp");
-        //for (Node n : nodes) {
-        //    System.out.println(n);
-        //}
-
-
 
         Expectiminimax e = new Expectiminimax();
         System.out.println(e.runExpectiminimax(node, 8));
