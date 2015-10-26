@@ -25,12 +25,6 @@ public class Node {
             {0,0,0,0}
     };
 
-    private static int[][] gradiantRight = new int[][] {
-            {0,1,2,3},
-            {-1,0,1,2},
-            {-2,-1,0,1},
-            {-3,-2,-1,0}
-    };
     private static int[][] gradiantLeft = new int[][] {
             {3,2,1,0},
             {2,1,0,-1},
@@ -49,6 +43,7 @@ public class Node {
         };
     }
 
+    // Return a copy of this node
     public Node newNode(NodeType type) {
         Node node = new Node(type);
         node.setBoard(this.getCopyOfBoard());
@@ -91,6 +86,7 @@ public class Node {
         return node;
     }
 
+    // Create an array with a copy node for each move.
     public Node[] getMovePermutations() {
         Node[] nodes = new Node[4];
         nodes[0] = this.getUp();
@@ -100,6 +96,7 @@ public class Node {
         return nodes;
     }
 
+    // Create an array with a copy of nodes for each random spawn.
     public Node[] getPermutations() {
         getNumberOfEmptyCells();
         ArrayList<Node> nodes = new ArrayList<>();
@@ -118,6 +115,7 @@ public class Node {
         return nodes.toArray(new Node[nodes.size()]);
     }
 
+    // Convert board from FX2048 to int[][] array
     public void populateBoard(Map<Location, Tile> grid) {
         for (Location loc : grid.keySet()) {
             Tile t = grid.get(loc);
@@ -128,6 +126,7 @@ public class Node {
         System.out.println(this);
     }
 
+    // Copy int[][] array
     private int[][] getCopyOfBoard() {
         int[][] newBoard = new int[4][4];
         for (int i = 0; i < this.board.length; i++) {
@@ -136,6 +135,7 @@ public class Node {
         return newBoard;
     }
 
+    // Move the board to the left, currently not optimal, but functional.
     private void moveLeft() {
         for (int row = 0; row < this.board.length; row++) {
             for (int i = 0; i < this.board[row].length; i++) {
@@ -178,6 +178,7 @@ public class Node {
         }
     }
 
+    // Count the number of empty cells
     public int getNumberOfEmptyCells(){
         if (this.emptyScore == 0) {
             for (int row = 0; row < this.getBoard().length; row++) {
@@ -233,6 +234,7 @@ public class Node {
         return clusteringScore;
     }
 
+    // Compare the current board to the board matrix
     public double compareBoardToWeightMatrix(int[][] weightMatrix, int[][] board) {
         double score = 0.0;
 
@@ -244,16 +246,21 @@ public class Node {
         return score;
     }
 
+    // Calculate the heuristic score of the board
     public double heuristicScore() {
         double score = 0.0;
 
         double[] weightMatrixList = new double[4];
+
+        // Calculate the weightmatrix score for each corner
+        // One corner may be better than another
         for (int i = 0; i < 4; i++) {
             Util.inplaceRotate(gradiantLeft);
             weightMatrixList[i] = this.compareBoardToWeightMatrix(gradiantLeft, this.board);
         }
 
         Arrays.sort(weightMatrixList);
+        // Take the best corner
         double weightMatrix = weightMatrixList[weightMatrixList.length - 1];
         //double weightMatrix = this.compareBoardToWeightMatrix(gradiantLeft, this.board);
 
@@ -270,6 +277,7 @@ public class Node {
         this.board = board;
     }
 
+    // Calculate the probability of this spawn
     public double getProbability(int possibleChildren) {
         double halfPossibleChildren = possibleChildren / 2;
         double chance = (1 / halfPossibleChildren) * probability;

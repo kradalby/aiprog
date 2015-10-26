@@ -14,11 +14,10 @@ import java.util.concurrent.TimeUnit;
  */
 public class Expectiminimax {
 
-    public static double highest = 0.0;
-
     public Expectiminimax() {
     }
 
+    // Expectiminimax imlementation
     public static double expectiminimax(Node node, int depth) {
         double alpha = 0.0;
 
@@ -30,6 +29,7 @@ public class Expectiminimax {
         if (node.getType() == NodeType.MAX) {
             alpha = Double.NEGATIVE_INFINITY;
 
+            // Get all permutations of the board based on move
             Node[] children = node.getMovePermutations();
 
             for (Node child : children) {
@@ -39,6 +39,7 @@ public class Expectiminimax {
         } else if (node.getType() == NodeType.CHANCE) {
             alpha = 0.0;
 
+            // Get all permutations of the board based on random spawns
             Node[] children = node.getPermutations();
 
             for (Node child : children) {
@@ -50,6 +51,7 @@ public class Expectiminimax {
 
     }
 
+    // Change the depth dynamically based on empty squares.
     public int getDynamicDepth(Node node, int baseDepth) {
         int depth = baseDepth;
 
@@ -72,6 +74,11 @@ public class Expectiminimax {
 
     }
 
+    /*
+    Single thread usage of expectiminimax.
+    runs expectimax for each move, compares and returns the
+    best direction.
+     */
     public Direction runExpectiminimax(Node node, int depth) {
         Map<Double, Direction> scores = new HashMap<>();
         depth = getDynamicDepth(node, depth);
@@ -105,6 +112,12 @@ public class Expectiminimax {
         return dir;
     }
 
+    /*
+    Multi thread usage of expectiminimax.
+    runs expectimax for each move, compares and returns the
+    best direction.
+    Currently got some bugs.
+     */
     public Direction runExpectiminimaxThreaded(Node node, int depth) {
         depth = getDynamicDepth(node, depth);
 
@@ -153,6 +166,10 @@ public class Expectiminimax {
         return dir;
     }
 
+    /*
+    The entrypoint for FX2048, takes a board representation and returns
+    the best direction.
+     */
     public Direction getNextMove(Map<Location, Tile> current, boolean threaded) {
         Direction dir;
         //System.out.println("Getting next move");
