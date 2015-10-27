@@ -19,10 +19,10 @@ public class Node {
     private int emptyScore = 0;
 
     private static int[][] snake = new int[][] {
-            {1024,512,256,256},
-            {32,64,64,128},
-            {0,0,0,0},
-            {0,0,0,0}
+            {32768,16384,8192,4096},
+            {256,512,1024,2048},
+            {128,64,32,16},
+            {1,2,4,8}
     };
 
     private static int[][] gradiantLeft = new int[][] {
@@ -262,7 +262,7 @@ public class Node {
         Arrays.sort(weightMatrixList);
         // Take the best corner
         double weightMatrix = weightMatrixList[weightMatrixList.length - 1];
-        //double weightMatrix = this.compareBoardToWeightMatrix(gradiantLeft, this.board);
+//        double weightMatrix = this.compareBoardToWeightMatrix(snake, this.board);
 
         score = weightMatrix;
 

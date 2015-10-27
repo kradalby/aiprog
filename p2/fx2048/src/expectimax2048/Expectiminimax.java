@@ -4,7 +4,10 @@ import game2048.Direction;
 import game2048.Location;
 import game2048.Tile;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -56,7 +59,9 @@ public class Expectiminimax {
         int depth = baseDepth;
 
         if (node.getNumberOfEmptyCells() != 0) {
-            if (node.getNumberOfEmptyCells() < 2) {
+            if (node.getNumberOfEmptyCells() <= 1) {
+                depth = baseDepth + 5;
+            } else if (node.getNumberOfEmptyCells() < 2) {
                 depth = baseDepth + 4;
             } else if (node.getNumberOfEmptyCells() < 4) {
                 depth = baseDepth + 3;
