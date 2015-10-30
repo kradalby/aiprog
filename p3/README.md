@@ -9,4 +9,6 @@ You will need to have virtualenv installed.
     make env
     make dev
 
+### Optional: Add environment to pycharm
+https://www.jetbrains.com/pycharm/help/adding-existing-virtual-environment.html
 
