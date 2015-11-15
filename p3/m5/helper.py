@@ -125,7 +125,7 @@ def dump_flat_cases(filename,cases,dir=__mnist_path__,labeled=True):
     pickle.dump([cases[0],labels],f)
 
 def load_flat_cases(filename,dir=__mnist_path__):
-    f = open(dir + filename,'rb')
+    f = open(os.path.join(dir,filename),'rb')
     return pickle.load(f)
 
 # The high-level routines for dumping (loading) collections of flattened images to (from) a single file.

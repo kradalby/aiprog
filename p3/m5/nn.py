@@ -1,3 +1,3 @@
 from helper import *
 
-
+quicktest()
