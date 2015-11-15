@@ -6,7 +6,7 @@ __author__ = 'keithd'
 import os, struct
 import time
 from array import array as pyarray
-#import matplotlib.pyplot as pyplot
+import matplotlib.pyplot as pyplot
 import numpy
 import pickle
 
@@ -76,7 +76,7 @@ def load_mnist(dataset="training", digits=numpy.arange(10), path= __mnist_path__
 #  These two functions assume that the image is in the standard MNIST format: a 2-d numpy array.
 
 # Other colormaps: binary, jet, copper, rainbow, summer, autumn, winter, spring...
-def show_avg_digit(digit, cm = 'gray'):
+def show_avg_digit(digit, cm = 'spring'):
     images, labels = load_mnist('training', digits=[digit])
     show_digit_image(images.mean(axis=0),cm=cm)
 
@@ -155,4 +155,3 @@ def quicktest(n = 99):
     image = reconstruct_image(features[n])
     show_digit_image(image)
     show_avg_digit(5)
-
