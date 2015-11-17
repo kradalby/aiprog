@@ -6,7 +6,7 @@ __author__ = 'keithd'
 import os, struct
 import time
 from array import array as pyarray
-import matplotlib.pyplot as pyplot
+#import matplotlib.pyplot as pyplot
 import numpy
 import pickle
 
