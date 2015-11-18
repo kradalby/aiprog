@@ -1,5 +1,5 @@
 import theano
-from helper import *
+from mnist_basics import *
 from theano import tensor as T
 from theano.sandbox.rng_mrg import MRG_RandomStreams as RandomStreams
 import numpy as np
@@ -20,39 +20,62 @@ class Layer:
         self.shape = theano.shared(self.floatX(np.random.randn(self.input, self.output) * 0.01))
 
 class ANN:
-    def __init__(self):
+    def __init__(self, layer_sizes, layer_activations):
         self.training_images, self.training_labels = load_all_flat_cases(type='training')
         self.test_images, self.test_labels = load_all_flat_cases(type='testing')
         self.grayscale()
-        self.convert_number_to_array()
+        self.test_labels = self.convert_number_to_array(self.test_labels)
+        self.training_labels = self.convert_number_to_array(self.training_labels)
+
+        self.X = T.fmatrix()
+        self.Y = T.fmatrix()
+
+        self.create_layers(layer_sizes, layer_activations)
+
+        self.pyx = self.model(self.X)
+
+        self.yx = T.argmax(self.pyx, axis=1)
+
+        # SOMETHING CAN BE WRONG HERE
+        self.output = self.layers[-1].shape
+        self.cost = T.sum((self.Y-self.pyx)**2, acc_dtype=theano.config.floatX)
+        # cost = T.mean(T.nnet.categorical_crossentropy(X, Y))
+        self.params = [x.shape for x in self.layers]
+        self.updates = self.RMSprop(self.cost, self.params, lr=0.001)
+
+        self.train = theano.function(inputs=[self.X, self.Y], outputs=self.cost, updates=self.updates, allow_input_downcast=True)
+        self.predict = theano.function(inputs=[self.X], outputs=self.yx, allow_input_downcast=True)
+
+        tri = self.training_images
+        trl = self.training_labels
+        for i in range(20):
+            for start, end in zip(list(range(0, len(tri), 128)), list(range(128, len(tri), 128))):
+                self.cost = self.train(tri[start:end], trl[start:end])
+            #print(np.mean(np.argmax(ann.test_labels, axis=1) == ann.predict(ann.test_images)))
+            #print(ann.predict(ann.test_images))
+
 
     def grayscale(self):
         training = []
         for img in self.training_images:
-            img = np.asarray(img)
+            img = np.asarray(img, dtype=theano.config.floatX)
             training.append(img/255)
         self.training_images = training
 
         test = []
         for img in self.test_images:
-            img = np.asarray(img)
+            img = np.asarray(img, dtype=theano.config.floatX)
             test.append(img/255)
         self.test_images = test
 
-    def convert_number_to_array(self):
-        training = []
-        for label in self.training_labels:
-            arr = np.zeros(10)
-            arr.put(label, 1)
-            training.append(arr)
-        self.training_labels = training
+    def convert_number_to_array(self, data):
+        converted_data = []
+        for label in data:
+            arr = np.zeros(10, dtype=theano.config.floatX)
+            arr.put(np.float32(label), np.float32(1))
+            converted_data.append(arr)
 
-        test = []
-        for label in self.test_labels:
-            arr = np.zeros(10)
-            arr.put(label, 1)
-            test.append(arr)
-        self.test_labels = test
+        return converted_data
 
 
     # Activation function
@@ -127,54 +150,56 @@ q
         return l
 
 
+    def blind_test(self, images):
+        self.test_images = images
+        self.grayscale()
+        return self.go()
+
+    def go(self):
+        predictions = self.predict(self.test_images)
+        print(len(predictions))
+        return predictions.tolist()
+
+
+
 if __name__ == "__main__":
 
 
     scenario_sizes = [
-        [784, 100, 10],
-        [784, 300, 10],
-        [784, 625, 100, 10],
-        [784, 625, 625, 10],
-        [784, 625, 300, 100, 10],
+        #[784, 100, 10],
+        #[784, 300, 10],
+        #[784, 625, 100, 10],
+        #[784, 625, 625, 10],
+        [784, 620, 620, 10],
+        #[784, 625, 300, 100, 10],
     ]
 
     scenario_act = [
-        ['rect', 'soft'],
-        ['rect', 'soft'],
+        #['rect', 'soft'],
+        #['rect', 'soft'],
+        #['rect', 'rect', 'soft'],
+        #['rect', 'rect', 'soft'],
         ['rect', 'rect', 'soft'],
-        ['rect', 'rect', 'soft'],
-        ['rect', 'sig', 'sig', 'soft'],
+        #['rect', 'sig', 'sig', 'soft'],
     ]
 
-    for sizes, activations in zip(scenario_sizes, scenario_act):
-        ann = ANN()
+    ann = ANN(scenario_sizes[0], scenario_act[0])
 
-        X = T.fmatrix()
-        Y = T.fmatrix()
+    minor_demo(ann)
 
-        layer_sizes = sizes
-        layer_activations = activations
+    #for sizes, activations in zip(scenario_sizes, scenario_act):
+    #    ann = ANN(sizes, activations)
 
-        ann.create_layers(layer_sizes, layer_activations)
 
-        pyx = ann.model(X)
+    #    tri = ann.training_images
+    #    trl = ann.training_labels
 
-        yx = T.argmax(pyx, axis=1)
+    #    ann.test_images, ann.test_labels = load_flat_cases_as_sets('demo_prep')
+    #    ann.grayscale()
+    #    ann.test_labels = ann.convert_number_to_array(ann.test_labels)
 
-        # SOMETHING CAN BE WRONG HERE
-        output = ann.layers[-1].shape
-        cost = T.sum((Y-pyx)**2, acc_dtype=theano.config.floatX)
-        # cost = T.mean(T.nnet.categorical_crossentropy(X, Y))
-        params = [x.shape for x in ann.layers]
-        updates = ann.RMSprop(cost, params, lr=0.001)
-
-        train = theano.function(inputs=[X, Y], outputs=cost, updates=updates, allow_input_downcast=True)
-        predict = theano.function(inputs=[X], outputs=yx, allow_input_downcast=True)
-
-        tri = ann.training_images
-        trl = ann.training_labels
-
-        for i in range(10):
-            for start, end in zip(list(range(0, len(tri), 128)), list(range(128, len(tri), 128))):
-                cost = train(tri[start:end], trl[start:end])
-            print(np.mean(np.argmax(ann.test_labels, axis=1) == predict(ann.test_images)))
+    #    for i in range(20):
+    #        for start, end in zip(list(range(0, len(tri), 128)), list(range(128, len(tri), 128))):
+    #            ann.cost = ann.train(tri[start:end], trl[start:end])
+    #        print(np.mean(np.argmax(ann.test_labels, axis=1) == ann.predict(ann.test_images)))
+    #        print(ann.predict(ann.test_images))
