@@ -48,7 +48,7 @@ class ANN:
 
         tri = self.training_images
         trl = self.training_labels
-        for i in range(20):
+        for i in range(15):
             for start, end in zip(list(range(0, len(tri), 128)), list(range(128, len(tri), 128))):
                 self.cost = self.train(tri[start:end], trl[start:end])
             #print(np.mean(np.argmax(ann.test_labels, axis=1) == ann.predict(ann.test_images)))
@@ -169,8 +169,8 @@ if __name__ == "__main__":
         #[784, 100, 10],
         #[784, 300, 10],
         #[784, 625, 100, 10],
-        #[784, 625, 625, 10],
-        [784, 620, 620, 10],
+        [784, 625, 625, 10],
+        #[784, 620, 620, 10],
         #[784, 625, 300, 100, 10],
     ]
 
@@ -178,8 +178,8 @@ if __name__ == "__main__":
         #['rect', 'soft'],
         #['rect', 'soft'],
         #['rect', 'rect', 'soft'],
-        #['rect', 'rect', 'soft'],
         ['rect', 'rect', 'soft'],
+        #['rect', 'rect', 'soft'],
         #['rect', 'sig', 'sig', 'soft'],
     ]
 
