@@ -20,8 +20,13 @@ class Layer:
         self.shape = theano.shared(self.floatX(np.random.randn(self.input, self.output) * 0.01))
 
 class ANN:
-    def __init__(self, layer_sizes, layer_activations):
-        self.boards, self.moves = load_all('dump.pkl')
+    def __init__(self, trains, learningrate, layer_sizes, layer_activations, notation):
+        if notation == "original":
+            self.boards, self.moves = load_all('dump.pkl')
+        else:
+            self.boards, self.moves = transforme_all_boards('dump.pkl')
+        print(self.boards[0])
+
 
         self.X = T.fmatrix()
         self.Y = T.fmatrix()
@@ -37,14 +42,14 @@ class ANN:
         self.cost = T.sum((self.Y-self.pyx)**2, acc_dtype=theano.config.floatX)
         # cost = T.mean(T.nnet.categorical_crossentropy(X, Y))
         self.params = [x.shape for x in self.layers]
-        self.updates = self.RMSprop(self.cost, self.params, lr=0.001)
+        self.updates = self.RMSprop(self.cost, self.params, lr=learningrate)
 
         self.train = theano.function(inputs=[self.X, self.Y], outputs=self.cost, updates=self.updates, allow_input_downcast=True)
         self.predict = theano.function(inputs=[self.X], outputs=self.pyx, allow_input_downcast=True)
 
         tri = self.boards
         trl = self.moves
-        for i in range(30):
+        for i in range(trains):
             for start, end in zip(list(range(0, len(tri), 128)), list(range(128, len(tri), 128))):
                 self.cost = self.train(tri[start:end], trl[start:end])
             #print(np.mean(np.argmax(ann.test_labels, axis=1) == ann.predict(ann.test_images)))

@@ -5,12 +5,13 @@
 
 from __future__ import print_function
 import ctypes
+import random
 import time
 import os
 from ann import ANN
 from dump import *
 
-ann = ANN([16, 8, 8, 8, 4], ['rect', 'rect', 'rect', 'soft'])
+ann = ANN(10, 0.001, [16, 8, 8, 8, 4], ['rect', 'rect', 'rect', 'soft'], "derp")
 
 def to_c_board(m):
     board = 0
@@ -43,14 +44,14 @@ def to_score(m):
     return [[_to_score(c) for c in row] for row in m]
 
 def find_best_move(m):
-    move = ann.go(m)
+    m2 = transforme_2048board_to_neighbour_score(m)
+    print(m2)
+    move = ann.go(m2)
     move = move[0]
-    print(move)
+    if move[0] == move[1] and move[2] == move[3]:
+        return random.randint(0,3)
     for i in sorted(move)[::-1]:
-        print(i)
-        print(move.tolist().index(i))
         legal = valid_move(move.tolist().index(i), m)
-        print(legal)
         if legal:
             return move.tolist().index(i)
     return 0
