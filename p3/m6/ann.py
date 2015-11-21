@@ -82,6 +82,10 @@ class ANN:
         return T.nnet.sigmoid(flatten_input_matrix)
 
     @staticmethod
+    def hardsig(flatten_input_matrix):
+        return T.nnet.hard_sigmoid(flatten_input_matrix)
+
+    @staticmethod
     def RMSprop(cost, params, lr=0.001, rho=0.9, epsilon=1e-6):
         grads = T.grad(cost=cost, wrt=params)
         updates = []
@@ -123,6 +127,8 @@ q
                 layer = Layer(input, size, self.softmax)
             elif activation == 'sig':
                 layer = Layer(input, size, self.sigmoid)
+            elif activation == 'hard':
+                layer = Layer(input, size, self.hardsig)
 
             print('created layer with: ({}, {}), {}'.format(input, size, activation))
             input = size

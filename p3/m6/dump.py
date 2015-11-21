@@ -80,3 +80,16 @@ def transforme_2048board_to_neighbour_score(board):
             kids.append(score)
 
     return kids
+
+def transform_2048board_to_neighbour_gradiant(board):
+
+    gradient = [
+        [7, 6, 5, 4],
+        [6, 5, 4, 3],
+        [5, 4, 3, 2],
+        [4, 3, 2, 1]
+    ]
+
+    gradient = np.asarray(gradient)
+
+    return np.dot(gradient, board).flatten()

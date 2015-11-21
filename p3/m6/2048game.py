@@ -2,6 +2,7 @@
 #Wei Guannan <kiss.kraks@gmail.com>
 
 import copy
+import math
 import random
 from colorama import Fore, Back
 from functools import reduce
@@ -149,9 +150,17 @@ def valid_move(dir, m):
                     return True
     return False
 
+def convert_map(m):
+    for y in range(len(m)):
+        for x in range(len(m[y])):
+            if m[y][x] != 0:
+                m[y][x] = int(math.log2(m[y][x]))
+    return m
+
 def find_best_move(m):
-    #m2 = transforme_2048board_to_neighbour_score(m)
-    m2 = m
+    k = copy.deepcopy(m)
+    m = convert_map(k)
+    m2 = transform_2048board_to_neighbour_score(m)
     move = ann.go(m2)
     move = move[0]
     if move[0] == move[1] and move[2] == move[3]:
@@ -281,9 +290,9 @@ if __name__ == "__main__":
         #print(len(TILES_ANN))
 
         result = ai2048demo.welch(TILES_RANDOM, TILES_ANN)
-        #print(result)
-        score = result.split('\n')[1][-1]
-        #print(score)
+        print(result)
+        score = result.split('\n')[3][-1]
+        print(score)
         scores.append(int(score))
 
     print(scores)
