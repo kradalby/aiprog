@@ -36,17 +36,17 @@ def load_all(filename):
 
     return list(load_all_boards_flat(dumps)), list(load_all_moves_flat(dumps))
 
-def transforme_all_boards(filename):
+def transform_all_boards(filename):
     dumps = []
     for dump in read_dump(filename):
-        dump.board = transforme_2048board_to_neighbour_score(dump.board)
+        dump.board = transform_2048board_to_neighbour_score(dump.board)
         if dump.move in [0, 1, 2, 3]:
             dumps.append(dump)
 
     return list(load_all_boards_flat(dumps)), list(load_all_moves_flat(dumps))
 
 
-def transforme_2048board_to_neighbour_score(board):
+def transform_2048board_to_neighbour_score(board):
 
     top = 0
     left = 0
@@ -80,3 +80,17 @@ def transforme_2048board_to_neighbour_score(board):
             kids.append(score)
 
     return kids
+
+
+def transform_2048board_to_snake_score(board):
+
+        snake = [[16, 15, 14, 13],
+                 [9, 10, 11, 12],
+                 [8, 7, 6, 5],
+                 [1, 2, 3, 4]]
+
+        dot = np.dot(snake, board)
+
+        return dot.flatten()
+
+
