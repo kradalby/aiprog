@@ -160,7 +160,7 @@ def convert_map(m):
 def find_best_move(m):
     k = copy.deepcopy(m)
     m = convert_map(k)
-    m2 = transform_2048board_to_neighbour_score(m)
+    m2 = transform(m)
     move = ann.go(m2)
     move = move[0]
     if move[0] == move[1] and move[2] == move[3]:

@@ -24,7 +24,7 @@ class ANN:
         if notation == "original":
             self.boards, self.moves = load_all('dump.pkl')
         else:
-            self.boards, self.moves = transforme_all_boards('dump.pkl')
+            self.boards, self.moves = transform_all_boards('dump.pkl')
         print(self.boards[0])
 
 
@@ -146,7 +146,7 @@ q
 
 
     def go(self, board=None):
-        if board:
+        if board != None:
             board = np.asarray(board, dtype=theano.config.floatX).flatten()
             return self.predict([board])
 

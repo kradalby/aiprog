@@ -5,13 +5,14 @@
 
 from __future__ import print_function
 import ctypes
+import math
 import random
 import time
 import os
 from ann import ANN
 from dump import *
 
-ann = ANN(10, 0.001, [16, 8, 8, 8, 4], ['rect', 'rect', 'rect', 'soft'], "derp")
+ann = ANN(10, 0.001, [64, 32, 16, 4], ['rect', 'rect', 'soft'], "derp")
 
 def to_c_board(m):
     board = 0
@@ -43,19 +44,6 @@ def _to_score(c):
 def to_score(m):
     return [[_to_score(c) for c in row] for row in m]
 
-def find_best_move(m):
-    m2 = transforme_2048board_to_neighbour_score(m)
-    print(m2)
-    move = ann.go(m2)
-    move = move[0]
-    if move[0] == move[1] and move[2] == move[3]:
-        return random.randint(0,3)
-    for i in sorted(move)[::-1]:
-        legal = valid_move(move.tolist().index(i), m)
-        if legal:
-            return move.tolist().index(i)
-    return 0
-
 def get_column(i, m):
     l = []
     for row in m:
@@ -70,12 +58,10 @@ def valid_move(dir, m):
     :param m: The board to check on
     :return: A boolean telling if a move is valid or not
     """
-    print(m)
     size = range(0, 4)
     if dir == 2 or dir == 3:
         for x in size:
             col = m[x]
-            print(col)
             for y in size:
                 if y < 4 - 1 and col[y] == col[y + 1] and col[y] != 0:
                     return True
@@ -87,7 +73,6 @@ def valid_move(dir, m):
     if dir == 0 or dir == 1:
         for y in size:
             line = get_column(y, m)
-            print(line)
             for x in size:
                 if x < 4 - 1 and line[x] == line[x + 1] and line[x] != 0:
                     return True
@@ -96,6 +81,28 @@ def valid_move(dir, m):
                 if dir == 0 and x < 4 - 1 and line[x] == 0 and line[x + 1] != 0:
                     return True
     return False
+
+def convert_map(m):
+    for y in range(len(m)):
+        for x in range(len(m[y])):
+            if m[y][x] != 0:
+                m[y][x] = int(math.log2(m[y][x]))
+    return m
+
+def find_best_move(m):
+    k = copy.deepcopy(m)
+    k = convert_map(k)
+    m2 = transform(k)
+    move = ann.go(m2)
+    move = move[0]
+    print(move)
+    if move[0] == move[1] and move[2] == move[3]:
+        return random.randint(0,3)
+    for i in sorted(move)[::-1]:
+        legal = valid_move(move.tolist().index(i), m)
+        if legal:
+            return move.tolist().index(i)
+    return 0
 
 def movename(move):
     return ['up', 'down', 'left', 'right'][move]
