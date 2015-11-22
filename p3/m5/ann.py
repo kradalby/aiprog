@@ -27,32 +27,44 @@ class ANN:
         self.test_labels = self.convert_number_to_array(self.test_labels)
         self.training_labels = self.convert_number_to_array(self.training_labels)
 
-        self.X = T.fmatrix()
-        self.Y = T.fmatrix()
+
+        X = T.fmatrix()
+        Y = T.fmatrix()
+
+        def floatX(X):
+            return np.asarray(X, dtype=theano.config.floatX)
+
+        def init_weights(shape):
+            return theano.shared(floatX(np.random.randn(*shape) * 0.01))
+
+        w_h = init_weights((784, 625))
+        w_h2 = init_weights((625, 625))
+        w_o = init_weights((625, 10))
 
         self.create_layers(layer_sizes, layer_activations)
 
-        self.pyx = self.model(self.X, 0., 0.)
-        self.noise_pyx = self.model(self.X, 0.2, 0.5)
+        noise_py_x = self.model(X, 0.2, 0.5)
+        py_x = self.model(X, 0., 0.)
+        y_x = T.argmax(py_x, axis=1)
 
-        self.yx = T.argmax(self.pyx, axis=1)
+        cost = T.mean(T.nnet.categorical_crossentropy(noise_py_x, Y))
+        params = [w_h, w_h2, w_o]
+        print(params)
+        params = [x.shape for x in self.layers]
+        print(params)
 
-        # SOMETHING CAN BE WRONG HERE
-        #self.output = self.layers[-1].shape
-        #self.cost = T.sum((self.Y-self.pyx)**2, acc_dtype=theano.config.floatX)
-        self.cost = T.mean(T.nnet.categorical_crossentropy(self.noise_pyx, self.Y))
-        self.params = [x.shape for x in self.layers]
-        self.updates = self.RMSprop(self.cost, self.params, lr=0.001)
+        updates = self.RMSprop(cost, params, lr=0.001)
 
-        self.train = theano.function(inputs=[self.X, self.Y], outputs=self.cost, updates=self.updates, allow_input_downcast=True)
-        self.predict = theano.function(inputs=[self.X], outputs=self.yx, allow_input_downcast=True)
+        self.train = theano.function(inputs=[X, Y], outputs=cost, updates=updates, allow_input_downcast=True)
+        self.predict = theano.function(inputs=[X], outputs=y_x, allow_input_downcast=True)
 
         tri = self.training_images
         trl = self.training_labels
-        for i in range(15):
+        for i in range(5):
             for start, end in zip(list(range(0, len(tri), 128)), list(range(128, len(tri), 128))):
-                self.cost = self.train(tri[start:end], trl[start:end])
-            print(np.mean(np.argmax(self.test_labels, axis=1) == self.predict(self.test_images)))
+                cost = self.train(tri[start:end], trl[start:end])
+                print(cost)
+            print(np.mean(np.argmax(trl, axis=1) == self.predict(tri)))
 
 
     def grayscale(self):
@@ -195,20 +207,3 @@ if __name__ == "__main__":
     ann = ANN(scenario_sizes[0], scenario_act[0])
 
     minor_demo(ann)
-
-    #for sizes, activations in zip(scenario_sizes, scenario_act):
-    #    ann = ANN(sizes, activations)
-
-
-    #    tri = ann.training_images
-    #    trl = ann.training_labels
-
-    #    ann.test_images, ann.test_labels = load_flat_cases_as_sets('demo_prep')
-    #    ann.grayscale()
-    #    ann.test_labels = ann.convert_number_to_array(ann.test_labels)
-
-    #    for i in range(20):
-    #        for start, end in zip(list(range(0, len(tri), 128)), list(range(128, len(tri), 128))):
-    #            ann.cost = ann.train(tri[start:end], trl[start:end])
-    #        print(np.mean(np.argmax(ann.test_labels, axis=1) == ann.predict(ann.test_images)))
-    #        print(ann.predict(ann.test_images))
