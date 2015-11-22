@@ -2,6 +2,7 @@ import pickle
 import numpy as np
 from itertools import product
 import copy
+import math
 
 
 class Dump:
@@ -12,8 +13,9 @@ class Dump:
 def convert_txt_to_dump(txtfile, dumpfile):
     lines = None
     with open(txtfile, 'r') as t:
-        lines = t.readlines()
+        lines = t.read().split('\n')
 
+    print(lines)
     with open(dumpfile, 'wb') as d:
         for line in lines:
             board, move = line.split('Direction')
@@ -159,7 +161,7 @@ def transform(board):
     result = []
 
     b = np.asarray(board).flatten()
-    result.append(b/max(b))
+    #result.append(b/max(b))
     result.append(transform_2048board_to_neighbour_score(board))
     for r in transform_2048board_to_neighbour_gradiant(board):
         result.append(r)
