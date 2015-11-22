@@ -10,6 +10,7 @@ from ann import ANN
 from dump import *
 import ai2048demo
 import argparse
+import time
 
 ann = None
 
@@ -159,15 +160,19 @@ def convert_map(m):
 
 def find_best_move(m):
     k = copy.deepcopy(m)
-    m = convert_map(k)
-    m2 = transform(m)
+    k = convert_map(k)
+    m2 = transform(k)
     move = ann.go(m2)
     move = move[0]
+    #print(move)
     if move[0] == move[1] and move[2] == move[3]:
         return random.randint(0,3)
     for i in sorted(move)[::-1]:
-        legal = valid_move(move.tolist().index(i), m)
+        f = move.tolist().index(i)
+        legal = valid_move(f, m)
         if legal:
+            #print(f)
+            #time.sleep(3)
             return move.tolist().index(i)
     return 0
 
@@ -192,16 +197,17 @@ def newGameANN(size):
             pass
             #print("no numbers to be reduce")
         else: randomNum(a)
+        #print('-------------------')
         #prettyPrint(a)
         if isWin(a) and not won:
             print("You win")
             won = True
         elif isFail(a):
             #print("You fail")
-            TILES_ANN.append(max([max(x) for x in a]))
-            RUN_ANN += 1
-            if RUN_ANN < 50:
-                newGameANN(4)
+            max_tile = max([max(x) for x in a])
+            # print(max_tile)
+            time.sleep(3)
+            TILES_ANN.append(max_tile)
             break
 
 def newGameRandom(size):
@@ -232,9 +238,6 @@ def newGameRandom(size):
         elif isFail(a):
             #print("You fail")
             TILES_RANDOM.append(max([max(x) for x in a]))
-            RUN_RANDOM += 1
-            if RUN_RANDOM < 50:
-                newGameRandom(4)
             break
 
 def test():
@@ -271,29 +274,33 @@ if __name__ == "__main__":
     notation = args.notation
     print(trains, learningrate, sizes, types, notation)
 
-    ann = ANN(trains, learningrate, sizes, types, notation)
+    ann = ANN(trains, learningrate, sizes, types, notation, 128)
 
     scores = []
     for i in range(50):
-        RUN_RANDOM = 0
-        RUN_ANN = 0
         TILES_RANDOM = []
         TILES_ANN = []
-        newGameRandom(4)
+        for i in range(50):
+            newGameRandom(4)
         #print(RUN_RANDOM)
         #print(TILES_RANDOM)
         #print(len(TILES_RANDOM))
 
-        newGameANN(4)
+        for i in range(50):
+            newGameANN(4)
         #print(RUN_ANN)
         #print(TILES_ANN)
         #print(len(TILES_ANN))
 
         result = ai2048demo.welch(TILES_RANDOM, TILES_ANN)
-        print(result)
-        score = result.split('\n')[3][-1]
-        print(score)
-        scores.append(int(score))
+        #print(result)
+        #score = result.split('\n')[3][-1]
+        #print(score)
+        #scores.append(int(score))
+        print('Random average:')
+        print(sum(TILES_RANDOM)/len(TILES_RANDOM))
+        print('ANN average:')
+        print(sum(TILES_ANN)/len(TILES_ANN))
 
-    print(scores)
-    print('avg: ', sum(scores)/len(scores))
+    #print(scores)
+    #print('avg: ', sum(scores)/len(scores))

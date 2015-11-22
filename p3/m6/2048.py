@@ -12,7 +12,7 @@ import os
 from ann import ANN
 from dump import *
 
-ann = ANN(10, 0.001, [64, 32, 16, 4], ['rect', 'rect', 'soft'], "derp")
+ann = ANN(15, 0.001, [32, 16, 16, 4], ['rect', 'rect', 'soft'], "derp")
 
 def to_c_board(m):
     board = 0
@@ -91,16 +91,19 @@ def convert_map(m):
 
 def find_best_move(m):
     k = copy.deepcopy(m)
-    k = convert_map(k)
-    m2 = transform(k)
+    m = convert_map(k)
+    m2 = transform(m)
     move = ann.go(m2)
     move = move[0]
     print(move)
     if move[0] == move[1] and move[2] == move[3]:
         return random.randint(0,3)
     for i in sorted(move)[::-1]:
-        legal = valid_move(move.tolist().index(i), m)
+        f = move.tolist().index(i)
+        legal = valid_move(f, m)
         if legal:
+            print(f)
+            time.sleep(3)
             return move.tolist().index(i)
     return 0
 

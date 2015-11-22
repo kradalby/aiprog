@@ -119,10 +119,10 @@ def transform_2048board_to_neighbour_score(board):
 def transform_2048board_to_neighbour_gradiant(board):
 
     weight = [
-        [7, 6, 5, 4],
-        [6, 5, 4, 3],
+        [4, 3, 2, 1],
         [5, 4, 3, 2],
-        [4, 3, 2, 1]
+        [6, 5, 4, 3],
+        [7, 6, 5, 4]
     ]
 
     c = copy.deepcopy(board)
@@ -161,10 +161,10 @@ def transform(board):
     result = []
 
     b = np.asarray(board).flatten()
-    #result.append(b/max(b))
+    result.append(b/max(b))
     result.append(transform_2048board_to_neighbour_score(board))
-    for r in transform_2048board_to_neighbour_gradiant(board):
-        result.append(r)
+    #for r in transform_2048board_to_neighbour_gradiant(board):
+    #    result.append(r)
     #for r in transform_2048board_to_neighbour_snake(board):
     #    result.append(r)
 

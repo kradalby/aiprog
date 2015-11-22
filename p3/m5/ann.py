@@ -32,14 +32,15 @@ class ANN:
 
         self.create_layers(layer_sizes, layer_activations)
 
-        self.pyx = self.model(self.X)
+        self.pyx = self.model(self.X, 0., 0.)
+        self.noise_pyx = self.model(self.X, 0.2, 0.5)
 
         self.yx = T.argmax(self.pyx, axis=1)
 
         # SOMETHING CAN BE WRONG HERE
-        self.output = self.layers[-1].shape
-        self.cost = T.sum((self.Y-self.pyx)**2, acc_dtype=theano.config.floatX)
-        # cost = T.mean(T.nnet.categorical_crossentropy(X, Y))
+        #self.output = self.layers[-1].shape
+        #self.cost = T.sum((self.Y-self.pyx)**2, acc_dtype=theano.config.floatX)
+        self.cost = T.mean(T.nnet.categorical_crossentropy(self.noise_pyx, self.Y))
         self.params = [x.shape for x in self.layers]
         self.updates = self.RMSprop(self.cost, self.params, lr=0.001)
 
@@ -51,8 +52,7 @@ class ANN:
         for i in range(15):
             for start, end in zip(list(range(0, len(tri), 128)), list(range(128, len(tri), 128))):
                 self.cost = self.train(tri[start:end], trl[start:end])
-            #print(np.mean(np.argmax(ann.test_labels, axis=1) == ann.predict(ann.test_images)))
-            #print(ann.predict(ann.test_images))
+            print(np.mean(np.argmax(self.test_labels, axis=1) == self.predict(self.test_images)))
 
 
     def grayscale(self):
@@ -110,7 +110,6 @@ class ANN:
         '''
         Note:
             Both lists must be the same length.
-q
         Args:
             layer_sizes: List of sizes for the layers, including input and output.
                 Format: [10, 20, 30, 40]
@@ -121,7 +120,7 @@ q
             layers:
         '''
 
-        assert len(layer_sizes)-1 == len(layer_activations)
+        assert len(layer_sizes) - 1 == len(layer_activations)
 
         self.layers = []
         input = layer_sizes.pop(0)
@@ -140,12 +139,22 @@ q
             layer.create_shape()
             self.layers.append(layer)
 
-    def model(self, X):
+
+    def dropout(self, X, p):
+        if p > 0:
+            retain_prob = 1 - p
+            X *= srng.binomial(X.shape, p=retain_prob, dtype=theano.config.floatX)
+            X /= retain_prob
+        return X
+
+    def model(self, X, input_dropout, hidden_dropout):
         #l = self.noise_removal(X, drop_input)
 
+        X = self.dropout(X, input_dropout)
         l = X
         for layer in self.layers:
             l = layer.activation_function(T.dot(l, layer.shape))
+            l = self.dropout(l, hidden_dropout)
 
         return l
 
