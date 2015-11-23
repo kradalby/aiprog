@@ -3,6 +3,8 @@ import numpy as np
 from itertools import product
 import copy
 import math
+from functools import reduce
+from gamelogic import *
 
 
 class Dump:
@@ -157,6 +159,8 @@ def transform_2048board_to_neighbour_snake(board):
 
     return result
 
+
+
 def transform(board):
     result = []
 
@@ -168,4 +172,10 @@ def transform(board):
     #for r in transform_2048board_to_neighbour_snake(board):
     #    result.append(r)
 
-    return np.asarray(result).flatten()
+    #result.append(reduceLeft(copy.deepcopy(board)))
+    #result.append(reduceRight(copy.deepcopy(board)))
+    #result.append(reduceUp(copy.deepcopy(board)))
+    #result.append(reduceDown(copy.deepcopy(board)))
+
+    r = np.asarray(result).flatten()
+    return r

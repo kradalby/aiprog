@@ -6,11 +6,13 @@ import math
 import random
 from colorama import Fore, Back
 from functools import reduce
+
 from ann import ANN
 from dump import *
 import ai2048demo
 import argparse
 import time
+from gamelogic import *
 
 ann = None
 
@@ -20,38 +22,6 @@ TILES_RANDOM = []
 RUN_ANN = 0
 TILES_ANN = []
 
-def reduceLineLeft(xs): 
-    def aux(acc, y):
-        if len(acc) == 0: acc.append(y)
-        elif acc[len(acc)-1] == y:
-            acc[len(acc)-1] = y * 2
-            acc.append(0)
-        else: acc.append(y)
-        return acc
-    res = [x for x in reduce(aux, [x for x in xs if x!=0], []) if x!=0]
-    res.extend([0 for i in range(0, len(xs)-len(res))])
-    return res
-
-def reduceLineRight(xs):
-    return reduceLineLeft(xs[::-1])[::-1]
-
-def reduceLeft(a):
-    return list(map(reduceLineLeft, a))
-
-def reduceRight(a):
-    return list(map(reduceLineRight, a))
-
-def reduceUp(a):
-    return rotate(reduceLeft(rotate(a)))
-
-def reduceDown(a):
-    return rotate(reduceRight(rotate(a)))
-
-def rotate(a):
-    def auxset(i, j): b[j][i] = a[i][j]
-    b = newEmpty(len(a))
-    list(map(lambda i: [auxset(i, j) for j in range(0, len(a[i]))], list(range(0, len(a)))))
-    return b
 
 def prettyPrint(a):
     def color(x):
@@ -74,8 +44,6 @@ def prettyPrint(a):
             print(color(j) + ("%4d" % j) + Fore.RESET + Back.RESET, end=' ')
         print()
 
-def newEmpty(size):
-    return [[0 for i in range(0, size)] for i in range(0, size)]
 
 def isWin(a):
     return traverse(a, lambda x: x == 2048)
@@ -275,13 +243,13 @@ if __name__ == "__main__":
     notation = args.notation
     print(trains, learningrate, sizes, types, notation)
 
-    ann = ANN(trains, learningrate, sizes, types, notation, 128)
+    ann = ANN(trains, learningrate, sizes, types, notation, 256)
 
     RANDOM_AVERAGES = []
     ANN_AVERAGES = []
 
     scores = []
-    for i in range(100):
+    for i in range(300):
         print()
         print()
         print()
@@ -302,7 +270,11 @@ if __name__ == "__main__":
 
         result = ai2048demo.welch(TILES_RANDOM, TILES_ANN)
         print(result)
-        score = result.split('\n')[3][-3]
+        score = 0
+        try:
+            score = result.split('\n')[3][-3]
+        except:
+            score = 0
         print(score)
         scores.append(int(score))
         RANDOM_AVERAGE = sum(TILES_RANDOM)/len(TILES_RANDOM)

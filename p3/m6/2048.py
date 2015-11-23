@@ -12,7 +12,7 @@ import os
 from ann import ANN
 from dump import *
 
-ann = ANN(5, 0.001, [48, 1024, 4], ['rect', 'soft'], "derp", 128)
+ann = ANN(2, 0.001, [48, 2048, 4], ['rect', 'soft'], "derp", 128)
 
 def to_c_board(m):
     board = 0
@@ -92,6 +92,7 @@ def convert_map(m):
     return m
 
 def find_best_move(m):
+    input()
     k = copy.deepcopy(m)
     #k = convert_map(k)
     m2 = transform(k)
