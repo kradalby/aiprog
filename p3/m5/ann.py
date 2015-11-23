@@ -38,8 +38,8 @@ class ANN:
 
         # SOMETHING CAN BE WRONG HERE
         self.output = self.layers[-1].shape
-        self.cost = T.sum((self.Y-self.pyx)**2, acc_dtype=theano.config.floatX)
-        # cost = T.mean(T.nnet.categorical_crossentropy(X, Y))
+        #self.cost = T.sum((self.Y-self.pyx)**2, acc_dtype=theano.config.floatX)
+        self.cost = T.mean(T.nnet.categorical_crossentropy(self.pyx, self.Y))
         self.params = [x.shape for x in self.layers]
         self.updates = self.RMSprop(self.cost, self.params, lr=0.001)
 
@@ -48,11 +48,10 @@ class ANN:
 
         tri = self.training_images
         trl = self.training_labels
-        for i in range(15):
+        for i in range(25):
             for start, end in zip(list(range(0, len(tri), 128)), list(range(128, len(tri), 128))):
                 self.cost = self.train(tri[start:end], trl[start:end])
-            #print(np.mean(np.argmax(ann.test_labels, axis=1) == ann.predict(ann.test_images)))
-            #print(ann.predict(ann.test_images))
+            print(np.mean(np.argmax(self.test_labels, axis=1) == self.predict(self.test_images)))
 
 
     def grayscale(self):
@@ -76,6 +75,13 @@ class ANN:
             converted_data.append(arr)
 
         return converted_data
+
+    def dropout(self, X, p=0.):
+        if p > 0:
+            retain_prob = 1 - p
+            X *= srng.binomial(X.shape, p=retain_prob, dtype=theano.config.floatX)
+            X /= retain_prob
+        return X
 
 
     # Activation function
@@ -140,12 +146,14 @@ q
             layer.create_shape()
             self.layers.append(layer)
 
+
     def model(self, X):
         #l = self.noise_removal(X, drop_input)
 
         l = X
         for layer in self.layers:
-            l = layer.activation_function(T.dot(l, layer.shape))
+            y = self.dropout(l)
+            l = layer.activation_function(T.dot(y, layer.shape))
 
         return l
 

@@ -24,7 +24,7 @@ class ANN:
         if notation == "original":
             self.boards, self.moves = load_all('dump.pkl')
         else:
-            self.boards, self.moves = transforme_all_boards('dump.pkl')
+            self.boards, self.moves = transform_all_boards('dump.pkl')
         print(self.boards[0])
 
 
@@ -41,6 +41,7 @@ class ANN:
         self.output = self.layers[-1].shape
         self.cost = T.sum((self.Y-self.pyx)**2, acc_dtype=theano.config.floatX)
         # cost = T.mean(T.nnet.categorical_crossentropy(X, Y))
+        #cost = T.mean(T.sqr(self.Y - self.pyx))
         self.params = [x.shape for x in self.layers]
         self.updates = self.RMSprop(self.cost, self.params, lr=learningrate)
 
