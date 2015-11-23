@@ -249,7 +249,7 @@ if __name__ == "__main__":
     ANN_AVERAGES = []
 
     scores = []
-    for i in range(300):
+    for i in range(3):
         print()
         print()
         print()
