@@ -2,6 +2,7 @@
 #Wei Guannan <kiss.kraks@gmail.com>
 
 import copy
+import math
 import random
 from colorama import Fore, Back
 from functools import reduce
@@ -9,6 +10,7 @@ from ann import ANN
 from dump import *
 import ai2048demo
 import argparse
+import time
 
 ann = None
 
@@ -149,16 +151,28 @@ def valid_move(dir, m):
                     return True
     return False
 
+def convert_map(m):
+    for y in range(len(m)):
+        for x in range(len(m[y])):
+            if m[y][x] != 0:
+                m[y][x] = int(math.log2(m[y][x]))
+    return m
+
 def find_best_move(m):
-    #m2 = transforme_2048board_to_neighbour_score(m)
-    m2 = m
+    k = copy.deepcopy(m)
+    k = convert_map(k)
+    m2 = transform(k)
     move = ann.go(m2)
     move = move[0]
+    #print(move)
     if move[0] == move[1] and move[2] == move[3]:
         return random.randint(0,3)
     for i in sorted(move)[::-1]:
-        legal = valid_move(move.tolist().index(i), m)
+        f = move.tolist().index(i)
+        legal = valid_move(f, m)
         if legal:
+            #print(f)
+            #time.sleep(3)
             return move.tolist().index(i)
     return 0
 
@@ -183,16 +197,18 @@ def newGameANN(size):
             pass
             #print("no numbers to be reduce")
         else: randomNum(a)
+        #print('-------------------')
         #prettyPrint(a)
         if isWin(a) and not won:
             print("You win")
             won = True
         elif isFail(a):
             #print("You fail")
-            TILES_ANN.append(max([max(x) for x in a]))
-            RUN_ANN += 1
-            if RUN_ANN < 50:
-                newGameANN(4)
+            max_tile = max([max(x) for x in a])
+            #print('-------------------')
+            #prettyPrint(a)
+            #print(max_tile)
+            TILES_ANN.append(max_tile)
             break
 
 def newGameRandom(size):
@@ -223,9 +239,6 @@ def newGameRandom(size):
         elif isFail(a):
             #print("You fail")
             TILES_RANDOM.append(max([max(x) for x in a]))
-            RUN_RANDOM += 1
-            if RUN_RANDOM < 50:
-                newGameRandom(4)
             break
 
 def test():
@@ -262,29 +275,57 @@ if __name__ == "__main__":
     notation = args.notation
     print(trains, learningrate, sizes, types, notation)
 
-    ann = ANN(trains, learningrate, sizes, types, notation)
+    ann = ANN(trains, learningrate, sizes, types, notation, 128)
+
+    RANDOM_AVERAGES = []
+    ANN_AVERAGES = []
 
     scores = []
-    for i in range(50):
-        RUN_RANDOM = 0
-        RUN_ANN = 0
+    for i in range(100):
+        print()
+        print()
+        print()
+        print('RUN NUMBER:', i + 1)
         TILES_RANDOM = []
         TILES_ANN = []
-        newGameRandom(4)
+        for i in range(50):
+            newGameRandom(4)
         #print(RUN_RANDOM)
         #print(TILES_RANDOM)
         #print(len(TILES_RANDOM))
 
-        newGameANN(4)
+        for i in range(50):
+            newGameANN(4)
         #print(RUN_ANN)
         #print(TILES_ANN)
         #print(len(TILES_ANN))
 
         result = ai2048demo.welch(TILES_RANDOM, TILES_ANN)
-        #print(result)
-        score = result.split('\n')[1][-1]
-        #print(score)
+        print(result)
+        score = result.split('\n')[3][-3]
+        print(score)
         scores.append(int(score))
+        RANDOM_AVERAGE = sum(TILES_RANDOM)/len(TILES_RANDOM)
+        ANN_AVERAGE = sum(TILES_ANN)/len(TILES_ANN)
+        print('Random average:')
+        print(RANDOM_AVERAGE)
+        print('ANN average:')
+        print(ANN_AVERAGE)
+        RANDOM_AVERAGES.append(RANDOM_AVERAGE)
+        ANN_AVERAGES.append(ANN_AVERAGE)
 
+    print()
+    print()
+    print()
+    print('=========================================================================')
+    print(trains, learningrate, sizes, types, notation)
     print(scores)
     print('avg: ', sum(scores)/len(scores))
+    print('Random average:')
+    print(sum(RANDOM_AVERAGES)/len(RANDOM_AVERAGES))
+    print('ANN average:')
+    print(sum(ANN_AVERAGES)/len(ANN_AVERAGES))
+    print('=========================================================================')
+    print()
+    print()
+    print()

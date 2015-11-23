@@ -20,12 +20,12 @@ class Layer:
         self.shape = theano.shared(self.floatX(np.random.randn(self.input, self.output) * 0.01))
 
 class ANN:
-    def __init__(self, trains, learningrate, layer_sizes, layer_activations, notation):
+    def __init__(self, trains, learningrate, layer_sizes, layer_activations, notation, batchsize):
+        print(theano.config.allow_gc)
         if notation == "original":
             self.boards, self.moves = load_all('dump.pkl')
         else:
             self.boards, self.moves = transform_all_boards('dump.pkl')
-        print(self.boards[0])
 
 
         self.X = T.fmatrix()
@@ -39,9 +39,9 @@ class ANN:
 
         # SOMETHING CAN BE WRONG HERE
         self.output = self.layers[-1].shape
-        self.cost = T.sum((self.Y-self.pyx)**2, acc_dtype=theano.config.floatX)
-        # cost = T.mean(T.nnet.categorical_crossentropy(X, Y))
-        #cost = T.mean(T.sqr(self.Y - self.pyx))
+        #self.cost = T.sum((self.Y-self.pyx)**2, acc_dtype=theano.config.floatX)
+        #self.cost = T.mean(T.sqr(self.Y - self.pyx))
+        self.cost = T.mean(T.nnet.categorical_crossentropy(self.pyx, self.Y))
         self.params = [x.shape for x in self.layers]
         self.updates = self.RMSprop(self.cost, self.params, lr=learningrate)
 
@@ -50,11 +50,13 @@ class ANN:
 
         tri = self.boards
         trl = self.moves
+        print(self.boards[1000])
         for i in range(trains):
-            for start, end in zip(list(range(0, len(tri), 128)), list(range(128, len(tri), 128))):
+            print(i)
+            for start, end in zip(list(range(0, len(tri), batchsize)), list(range(batchsize, len(tri), batchsize))):
                 self.cost = self.train(tri[start:end], trl[start:end])
-            #print(np.mean(np.argmax(ann.test_labels, axis=1) == ann.predict(ann.test_images)))
-            #print(ann.predict(ann.test_images))
+            print(np.mean(np.argmax(trl, axis=1) == np.argmax(self.predict(tri), axis=1)))
+            print(self.predict([tri[1000]]))
 
 
     def convert_number_to_array(self, data):
@@ -83,6 +85,10 @@ class ANN:
         return T.nnet.sigmoid(flatten_input_matrix)
 
     @staticmethod
+    def hardsig(flatten_input_matrix):
+        return T.nnet.hard_sigmoid(flatten_input_matrix)
+
+    @staticmethod
     def RMSprop(cost, params, lr=0.001, rho=0.9, epsilon=1e-6):
         grads = T.grad(cost=cost, wrt=params)
         updates = []
@@ -100,7 +106,6 @@ class ANN:
         '''
         Note:
             Both lists must be the same length.
-q
         Args:
             layer_sizes: List of sizes for the layers, including input and output.
                 Format: [10, 20, 30, 40]
@@ -124,6 +129,8 @@ q
                 layer = Layer(input, size, self.softmax)
             elif activation == 'sig':
                 layer = Layer(input, size, self.sigmoid)
+            elif activation == 'hard':
+                layer = Layer(input, size, self.hardsig)
 
             print('created layer with: ({}, {}), {}'.format(input, size, activation))
             input = size
@@ -141,7 +148,7 @@ q
 
 
     def go(self, board=None):
-        if board:
+        if board != None:
             board = np.asarray(board, dtype=theano.config.floatX).flatten()
             return self.predict([board])
 
@@ -154,18 +161,19 @@ q
 
 
 if __name__ == "__main__":
+    pass
 
 
-    scenario_sizes = [
-        [16, 8, 4],
-    ]
+    #scenario_sizes = [
+    #    [16, 8, 4],
+    #]
 
-    scenario_act = [
-        ['rect', 'soft'],
-    ]
+    #scenario_act = [
+    #    ['rect', 'soft'],
+    #]
 
-    ann = ANN(scenario_sizes[0], scenario_act[0])
-    ann.go()
+    #ann = ANN(scenario_sizes[0], scenario_act[0])
+    #ann.go()
 
     #minor_demo(ann)
 

@@ -1,12 +1,47 @@
 import pickle
 import numpy as np
 from itertools import product
+import copy
+import math
 
 
 class Dump:
     def __init__(self, move, board):
         self.move = move
         self.board = board
+
+def convert_txt_to_dump(txtfile, dumpfile):
+    lines = None
+    with open(txtfile, 'r') as t:
+        lines = t.read().split('\n')
+
+    print(lines)
+    with open(dumpfile, 'wb') as d:
+        for line in lines:
+            board, move = line.split('Direction')
+            board = eval(board)
+            move = move.split('}')[-1]
+            if move == 'DOWN':
+                move = 0
+            elif move == 'UP':
+                move = 1
+            elif move == 'LEFT':
+                move = 2
+            elif move == 'RIGTH':
+                move = 3
+
+            board = convert_map(board)
+
+            pickle.dump(Dump(move, board), d)
+
+def convert_map(m):
+    for y in range(len(m)):
+        for x in range(len(m[y])):
+            if m[y][x] != 0:
+                m[y][x] = int(math.log2(m[y][x]))
+    return m
+
+
 
 def read_dump(filename):
     with open(filename, 'rb') as f:
@@ -39,7 +74,7 @@ def load_all(filename):
 def transform_all_boards(filename):
     dumps = []
     for dump in read_dump(filename):
-        dump.board = transform_2048board_to_neighbour_score(dump.board)
+        dump.board = transform(dump.board)
         if dump.move in [0, 1, 2, 3]:
             dumps.append(dump)
 
@@ -79,18 +114,58 @@ def transform_2048board_to_neighbour_score(board):
                 score = (float(count)/float(len(temp)))
             kids.append(score)
 
-    return kids
+    return np.asarray(kids)
+
+def transform_2048board_to_neighbour_gradiant(board):
+
+    weight = [
+        [4, 3, 2, 1],
+        [5, 4, 3, 2],
+        [6, 5, 4, 3],
+        [7, 6, 5, 4]
+    ]
+
+    c = copy.deepcopy(board)
+
+    result = []
+
+    for i in range(1):
+        grad = np.dot(weight, c).flatten()
+        grad = grad/max(grad)
+        result.append(grad)
+        weight = np.rot90(weight)
+
+    return result
 
 
-def transform_2048board_to_snake_score(board):
+def transform_2048board_to_neighbour_snake(board):
 
-        snake = [[16, 15, 14, 13],
-                 [9, 10, 11, 12],
-                 [8, 7, 6, 5],
-                 [1, 2, 3, 4]]
+    weight = [[16, 15, 14, 13],
+             [9, 10, 11, 12],
+             [8, 7, 6, 5],
+             [1, 2, 3, 4]]
 
-        dot = np.dot(snake, board)
+    c = copy.deepcopy(board)
 
-        return dot.flatten()
+    result = []
 
+    for i in range(4):
+        grad = np.dot(weight, c).flatten()
+        grad = grad/max(grad)
+        result.append(grad)
+        weight = np.rot90(weight)
 
+    return result
+
+def transform(board):
+    result = []
+
+    b = np.asarray(board).flatten()
+    result.append(b/max(b))
+    result.append(transform_2048board_to_neighbour_score(board))
+    for r in transform_2048board_to_neighbour_gradiant(board):
+        result.append(r)
+    #for r in transform_2048board_to_neighbour_snake(board):
+    #    result.append(r)
+
+    return np.asarray(result).flatten()
