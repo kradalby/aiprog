@@ -163,8 +163,8 @@ def transform(board):
     b = np.asarray(board).flatten()
     result.append(b/max(b))
     result.append(transform_2048board_to_neighbour_score(board))
-    #for r in transform_2048board_to_neighbour_gradiant(board):
-    #    result.append(r)
+    for r in transform_2048board_to_neighbour_gradiant(board):
+        result.append(r)
     #for r in transform_2048board_to_neighbour_snake(board):
     #    result.append(r)
 

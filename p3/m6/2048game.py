@@ -205,8 +205,9 @@ def newGameANN(size):
         elif isFail(a):
             #print("You fail")
             max_tile = max([max(x) for x in a])
-            # print(max_tile)
-            time.sleep(3)
+            #print('-------------------')
+            #prettyPrint(a)
+            #print(max_tile)
             TILES_ANN.append(max_tile)
             break
 
@@ -276,8 +277,15 @@ if __name__ == "__main__":
 
     ann = ANN(trains, learningrate, sizes, types, notation, 128)
 
+    RANDOM_AVERAGES = []
+    ANN_AVERAGES = []
+
     scores = []
-    for i in range(50):
+    for i in range(100):
+        print()
+        print()
+        print()
+        print('RUN NUMBER:', i + 1)
         TILES_RANDOM = []
         TILES_ANN = []
         for i in range(50):
@@ -293,14 +301,31 @@ if __name__ == "__main__":
         #print(len(TILES_ANN))
 
         result = ai2048demo.welch(TILES_RANDOM, TILES_ANN)
-        #print(result)
-        #score = result.split('\n')[3][-1]
-        #print(score)
-        #scores.append(int(score))
+        print(result)
+        score = result.split('\n')[3][-3]
+        print(score)
+        scores.append(int(score))
+        RANDOM_AVERAGE = sum(TILES_RANDOM)/len(TILES_RANDOM)
+        ANN_AVERAGE = sum(TILES_ANN)/len(TILES_ANN)
         print('Random average:')
-        print(sum(TILES_RANDOM)/len(TILES_RANDOM))
+        print(RANDOM_AVERAGE)
         print('ANN average:')
-        print(sum(TILES_ANN)/len(TILES_ANN))
+        print(ANN_AVERAGE)
+        RANDOM_AVERAGES.append(RANDOM_AVERAGE)
+        ANN_AVERAGES.append(ANN_AVERAGE)
 
-    #print(scores)
-    #print('avg: ', sum(scores)/len(scores))
+    print()
+    print()
+    print()
+    print('=========================================================================')
+    print(trains, learningrate, sizes, types, notation)
+    print(scores)
+    print('avg: ', sum(scores)/len(scores))
+    print('Random average:')
+    print(sum(RANDOM_AVERAGES)/len(RANDOM_AVERAGES))
+    print('ANN average:')
+    print(sum(ANN_AVERAGES)/len(ANN_AVERAGES))
+    print('=========================================================================')
+    print()
+    print()
+    print()

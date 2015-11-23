@@ -39,8 +39,9 @@ class ANN:
 
         # SOMETHING CAN BE WRONG HERE
         self.output = self.layers[-1].shape
-        self.cost = T.sum((self.Y-self.pyx)**2, acc_dtype=theano.config.floatX)
-        # cost = T.mean(T.nnet.categorical_crossentropy(X, Y))
+        #self.cost = T.sum((self.Y-self.pyx)**2, acc_dtype=theano.config.floatX)
+        #self.cost = T.mean(T.sqr(self.Y - self.pyx))
+        self.cost = T.mean(T.nnet.categorical_crossentropy(self.pyx, self.Y))
         self.params = [x.shape for x in self.layers]
         self.updates = self.RMSprop(self.cost, self.params, lr=learningrate)
 
@@ -105,7 +106,6 @@ class ANN:
         '''
         Note:
             Both lists must be the same length.
-q
         Args:
             layer_sizes: List of sizes for the layers, including input and output.
                 Format: [10, 20, 30, 40]
