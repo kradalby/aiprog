@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 
 run1="--trains 5 --learningrate 0.001 --sizes 16 8 8 8 4 --types rect rect rect soft --notation original"
