@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 ''' Help the user achieve a high score in a real game of 2048 by using a move searcher. '''
@@ -18,7 +18,7 @@ def to_c_board(m):
     board = 0
     i = 0
     for row in m:
-        for c in row:            
+        for c in row:
             board |= c << (4*i)
             i += 1
     return board
